@@ -253,6 +253,7 @@ only at the parity end of the front.
 \begin{table*}[t]
 \centering
 \small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccccc}
 \toprule
 Tokenizer & Gini $\downarrow$ & Max/min $\downarrow$ & Compression $\uparrow$ & Gini diff.\ at matched compr. & Under-served, max ratio\\
@@ -272,7 +273,7 @@ Worst-$N$, $N=3$ & $0.0044\pm0.0003$ & 1.03 & $8.341\pm0.005$ & $-0.0000\pm0.000
 Worst-$N$, $N=5$ & $0.0042\pm0.0002$ & 1.02 & $8.349\pm0.011$ & $-0.0001\pm0.0002$ & 0.989\\
 Moving window & $0.0042\pm0.0001$ & 1.03 & $8.401\pm0.007$ & $-0.0002\pm0.0001$ & 0.980\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Fourteen languages at natural data balance, 64k vocabulary, mean $\pm$ standard
 deviation over three samples of training text. Compression is bytes per token on the
 training text. ``Gini diff.'' is the baseline's Gini minus that of the $p$-fair front at the
