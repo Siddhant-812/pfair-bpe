@@ -1,0 +1,10 @@
+target/
+data/
+data_*/
+results/
+results_*/
+checks/
+morph/
+__pycache__/
+*.log
+nohup.out

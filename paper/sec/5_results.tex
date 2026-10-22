@@ -1,0 +1,237 @@
+\section{Experiments}
+\label{sec:results}
+
+\subsection{Experimental setup}
+\label{sec:setup}
+
+\noindent\textbf{Languages and data.}
+We use Hindi, Marathi and Gujarati, for which gold morphological segmentations are
+available \citep{rathore2026}, together with English as the dominant language. Training text
+comes from the verified split of Sangraha \citep{khan2024}, with about 20 million characters
+for each Indian language and 80 million for English, so that English has four times the text
+of each other language. We NFC-normalise all lines and remove lines shorter than 20
+characters and exact duplicates. Parallel text comes from FLORES-200 \citep{nllb2022}: we use
+the \emph{dev} split (997 sentences) during training to measure the costs $t_\ell$, and the
+\emph{devtest} split (1012 sentences) only for the reported numbers.
+
+\noindent\textbf{Tokenizers.}
+All tokenizers are character-level BPE with whitespace pre-tokenization, a word-start marker
+and a vocabulary of 32{,}000. The base alphabet contains every character that occurs at least
+five times in the training text (about 1000 characters), and rarer characters map to an
+unknown token. We train $p\in\{1,2,4,8,16,32,\infty\}$, where $p=1$ is classical BPE and
+$p=\infty$ is our implementation of the base rule of Parity-aware BPE. As the main baseline,
+we use the \textbf{hybrid} schedule of \citet{foroutan2026}, which learns the first 50\%,
+75\% or 90\% of the merges with the classical rule and the rest with the parity rule. Both
+baselines are our own implementations of the published rules; the original is byte-level,
+and we do not implement its moving-window variant.
+
+\noindent\textbf{Protocol.}
+To measure variance due to the training data, we train every configuration on five
+non-overlapping samples of Sangraha and report the mean and standard deviation. To separate
+this from variance due to the test set, we additionally resample the devtest sentences 1000
+times with replacement (a paired bootstrap). Metrics are defined in
+Section~\ref{sec:problem}.
+
+\noindent\textbf{Implementation and checks.}
+We implement the trainer in Rust with no external dependencies, and verify it in three ways.
+First, the lazy trainer produces merge lists identical to full rescoring for all values of
+$p$ and for the hybrid on a small corpus, and identical 32k vocabularies for $p=4$ and
+$p=8$ on the full corpus. Second, the $p=1$ setting reproduces, merge for merge, an
+independent textbook implementation of BPE. Third, the evaluator's token counts on the
+training text equal the trainer's own totals. On a two-core machine, a 32k tokenizer trains
+in about 15 seconds on 140 million characters, against about 5 minutes with full rescoring,
+and the lazy heap re-checks on average 3 entries per merge at $p=1$ and 30 at $p=8$.
+
+\subsection{Classical BPE is unfair when one language dominates}
+
+Table~\ref{tab:perlang} reports the number of tokens each tokenizer needs for the same
+sentence. Under classical BPE, a Hindi sentence costs 35.0 tokens and its English
+translation 29.0, a difference of 21\%. The cause is visible in the last column of
+Table~\ref{tab:front}: English, with four sevenths of the training text, leads 49\% of the
+merges.
+
+\begin{table}[t]
+\centering
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Tokenizer & Hindi & Marathi & Gujarati & English & Max/min\\
+\midrule
+Classical ($p=1$) & 35.00 & 32.47 & 34.44 & 29.03 & 1.21\\
+$p=2$  & 34.68 & 32.31 & 34.09 & 29.23 & 1.19\\
+$p=4$  & 34.21 & 32.09 & 33.61 & 29.56 & 1.16\\
+$p=8$  & 33.63 & 31.90 & 33.11 & 30.10 & 1.12\\
+$p=16$ & 33.08 & 31.89 & 32.71 & 30.75 & 1.08\\
+$p=32$ & 32.68 & 31.98 & 32.47 & 31.40 & 1.04\\
+Parity-aware ($p=\infty$) & 32.06 & 32.45 & 32.29 & 32.49 & 1.01\\
+\midrule
+Hybrid, 90\% classical & 33.73 & 32.89 & 33.84 & 29.44 & 1.15\\
+Hybrid, 75\% classical & 32.86 & 33.26 & 33.08 & 30.23 & 1.10\\
+Hybrid, 50\% classical & 32.09 & 32.48 & 32.33 & 32.33 & 1.01\\
+\bottomrule
+\end{tabular}}
+\caption{Tokens per sentence on FLORES-200 devtest, mean over five samples of training
+text (standard deviations are at most 0.1). ``Max/min'' is the most expensive language
+divided by the cheapest.}
+\label{tab:perlang}
+\end{table}
+
+\subsection{Raising $p$ traces the compression--parity front}
+
+As $p$ grows, Hindi and Gujarati become cheaper, English becomes more expensive, and at
+$p=\infty$ the four costs meet near 32 tokens (Table~\ref{tab:perlang};
+Fig.~\ref{fig:perlang} in the appendix). Table~\ref{tab:front} and Fig.~\ref{fig:front}
+give the two summary measures. The Gini coefficient falls at every step, from 0.038 to
+0.003, while compression of the training text falls at every step, from 6.91 to 6.63 bytes
+per token.
+
+The price of parity is uneven along the front. At $p=8$, the Gini coefficient is 40\% lower
+than under classical BPE, while compression is 0.6\% lower. At $p=16$, the reduction is 60\%
+for 1.3\%, and full parity costs 4.0\%. Thus, a large part of the disparity can be removed
+for a small part of the cost of removing all of it.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+ & Gini of cost & \multicolumn{2}{c}{Compression (bytes/token)} & Merges led\\
+\cmidrule(lr){3-4}
+Tokenizer & (devtest) $\downarrow$ & training text $\uparrow$ & devtest $\uparrow$ & by English\\
+\midrule
+Classical ($p=1$) & $0.0380\pm0.0002$ & $6.910\pm0.004$ & $8.719\pm0.007$ & 49\%\\
+$p=2$  & $0.0347\pm0.0002$ & $6.907\pm0.004$ & $8.761\pm0.006$ & 47\%\\
+$p=4$  & $0.0298\pm0.0002$ & $6.897\pm0.004$ & $8.818\pm0.004$ & 43\%\\
+$p=8$  & $0.0229\pm0.0002$ & $6.868\pm0.004$ & $8.868\pm0.005$ & 38\%\\
+$p=16$ & $0.0152\pm0.0002$ & $6.818\pm0.005$ & $8.889\pm0.007$ & 34\%\\
+$p=32$ & $0.0084\pm0.0001$ & $6.760\pm0.006$ & $8.882\pm0.004$ & 30\%\\
+Parity-aware ($p=\infty$) & $0.0028\pm0.0004$ & $6.634\pm0.007$ & $8.830\pm0.006$ & 23\%\\
+\midrule
+Hybrid, 90\% classical & $0.0270\pm0.0002$ & $6.891\pm0.003$ & $8.788\pm0.005$ & 44\%\\
+Hybrid, 75\% classical & $0.0180\pm0.0005$ & $6.827\pm0.004$ & $8.821\pm0.008$ & 37\%\\
+Hybrid, 50\% classical & $0.0023\pm0.0004$ & $6.651\pm0.004$ & $8.834\pm0.005$ & 25\%\\
+\bottomrule
+\end{tabular}
+\caption{Parity and compression at a 32k vocabulary with English at four times the text of
+each other language. Mean $\pm$ standard deviation over five samples of training text.
+``Merges led by English'' is the share of merges to whose score English contributes most.}
+\label{tab:front}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}
+\begin{axis}[
+  width=9cm, height=7cm,
+  xlabel={compression of training text (bytes per token) $\rightarrow$ better},
+  ylabel={Gini of per-language cost (lower is fairer)},
+  xmin=6.56, xmax=6.97, ymin=-0.003, ymax=0.043,
+  xtick={6.6,6.7,6.8,6.9}, ytick={0,0.01,0.02,0.03,0.04},
+  scaled y ticks=false,
+  yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+  grid=major, grid style={draw=soft},
+  legend style={font=\small, at={(0.97,0.05)}, anchor=south east, draw=none, fill=white},
+  legend cell align=left,
+  tick label style={font=\small}, label style={font=\small}]
+\addplot[mark=*, mark size=2pt, thick, color=pfair,
+  error bars/.cd, x dir=both, x explicit, y dir=both, y explicit]
+  coordinates {
+    (6.9095,0.0380) +- (0.0036,0.0002)
+    (6.9075,0.0347) +- (0.0036,0.0002)
+    (6.8969,0.0298) +- (0.0035,0.0002)
+    (6.8677,0.0229) +- (0.0036,0.0002)
+    (6.8176,0.0152) +- (0.0049,0.0002)
+    (6.7601,0.0084) +- (0.0059,0.0001)
+    (6.6343,0.0028) +- (0.0067,0.0004)
+  };
+\addplot[only marks, mark=square*, mark size=2.2pt, color=hybrid,
+  error bars/.cd, x dir=both, x explicit, y dir=both, y explicit]
+  coordinates {
+    (6.6510,0.0023) +- (0.0039,0.0004)
+    (6.8271,0.0180) +- (0.0039,0.0005)
+    (6.8908,0.0270) +- (0.0034,0.0002)
+  };
+\legend{$p$-fair BPE, hybrid baseline}
+\node[font=\footnotesize, text=pfair, anchor=east] at (axis cs:6.9030,0.0390) {classical ($p=1$)};
+\node[font=\footnotesize, text=pfair, anchor=east] at (axis cs:6.8900,0.0303) {$p=4$};
+\node[font=\footnotesize, text=pfair, anchor=east] at (axis cs:6.8610,0.0235) {$p=8$};
+\node[font=\footnotesize, text=pfair, anchor=east] at (axis cs:6.8100,0.0159) {$p=16$};
+\node[font=\footnotesize, text=pfair, anchor=east] at (axis cs:6.7530,0.0092) {$p=32$};
+\node[font=\footnotesize, text=pfair, anchor=south west] at (axis cs:6.5680,0.0048) {Parity-aware ($p=\infty$)};
+\node[font=\footnotesize, text=hybrid, anchor=north west] at (axis cs:6.8950,0.0262) {90\%};
+\node[font=\footnotesize, text=hybrid, anchor=north west] at (axis cs:6.8310,0.0172) {75\%};
+\node[font=\footnotesize, text=hybrid, anchor=north west] at (axis cs:6.6560,0.0016) {50\%};
+\end{axis}
+\end{tikzpicture}}
+\caption{The measured compression--parity front. Each point is the mean of five samples of
+training text, and bars are one standard deviation (most are smaller than the marker).
+Increasing $p$ moves from classical BPE (top right) to Parity-aware BPE (bottom left). The
+hybrid baseline (share of classical merges) lies on the same curve.}
+\label{fig:front}
+\end{figure}
+
+\subsection{The front is reliable}
+
+Every increase in $p$ lowers both the Gini coefficient and the compression of the training
+text in five of five samples. The standard deviation of the Gini coefficient across samples
+is between 0.0001 and 0.0005, which is 10 to 30 times smaller than the difference between
+neighbouring values of $p$. Resampling the test sentences leads to the same conclusion: the
+95\% interval for classical BPE is $[0.036,0.040]$ and for $p=8$ it is $[0.021,0.025]$, and
+each step up in $p$ lowers the Gini coefficient in at least 99.7\% of the 1000 resamples.
+
+\subsection{Comparison with the hybrid baseline}
+
+The hybrid points in Fig.~\ref{fig:front} lie on the $p$-fair front. To compare the two
+methods at equal compression, we interpolate the $p$-fair front at the compression of each
+hybrid tokenizer, separately in each sample, and take the difference in Gini
+(Table~\ref{tab:hybrid}). The differences are about 0.001 and consistent in sign across the
+five samples, but go in both directions: $p$-fair BPE is slightly fairer at 75\%, whereas the
+hybrid is slightly fairer at 50\% and 90\%. Thus, neither method dominates the other on the
+front. Moreover, the hybrid with 50\% classical merges is at least as good as pure
+Parity-aware BPE on both measures (0.0023 vs.\ 0.0028 in Gini, 6.65 vs.\ 6.63 in
+compression), in line with the motivation for the hybrid in \citet{foroutan2026}.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+Hybrid & Gini difference & Fairer (samples)\\
+\midrule
+90\% classical & $-0.0014\pm0.0004$ & hybrid (5/5)\\
+75\% classical & $+0.0013\pm0.0003$ & $p$-fair (5/5)\\
+50\% classical & $-0.0012\pm0.0005$ & hybrid (5/5)\\
+\bottomrule
+\end{tabular}
+\caption{Hybrid baseline against $p$-fair BPE at the same training-text compression.
+Difference in Gini (hybrid minus $p$-fair), mean $\pm$ standard deviation over five
+samples.}
+\label{tab:hybrid}
+\end{table}
+
+Nevertheless, the two methods distribute the cost differently (Table~\ref{tab:perlang}).
+% TODO (E3 in experiments.md): this "no language worse off" statement holds for the four-language
+% setting only. In the 14-language pilot (reference_results/l14_preview) p-fair raises the cheapest
+% languages (Bengali, Hindi) like every fairness rule does; what stays true is that p-fair never
+% raises a language that costs MORE than the classical mean, whereas the hybrid does (Gujarati,
+% Malayalam). Reword to the under-served form once E3 has error bars (paper_tables.py underserved).
+For every value of $p$ we test, no Indian language costs more than under classical BPE.
+In contrast, the parity phase of the hybrid equalises the three Indian languages with one
+another, which raises Marathi above its classical cost at 90\% and 75\% classical merges,
+by up to 0.8 tokens per sentence (33.26 vs.\ 32.47 at 75\%). At similar compression, $p$-fair BPE
+with $p=8$ keeps Marathi at 31.90 while leaving a wider spread between the Indian languages.
+Consequently, the choice between the two depends on the goal: the hybrid moves closer to
+equal cost among the Indian languages, whereas $p$-fair BPE makes none of them worse off
+than classical BPE.
+
+\subsection{Compression on balanced test text}
+
+On devtest, where every language has the same content, intermediate values of $p$ compress
+better than classical BPE (8.89 vs.\ 8.72 bytes per token at $p=16$; Table~\ref{tab:front}).
+Classical BPE optimises compression of the training mixture, which is mostly English,
+whereas a balanced test set rewards the vocabulary that $p$-fair BPE moves to the other
+three languages. Thus, the loss in Fig.~\ref{fig:front} is a loss in compression of the
+training distribution, and whether it is a real cost depends on the mixture of languages the
+tokenizer meets in deployment.

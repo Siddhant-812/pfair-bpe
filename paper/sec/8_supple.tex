@@ -1,0 +1,138 @@
+% Appendix. Sections marked "(planned)" and cells marked "--" are filled from
+% the experiments in experiments.md (repository root).
+
+\section{Per-language costs along the front}
+\label{app:perlang}
+
+\begin{figure}[h]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}
+\begin{axis}[
+  width=9cm, height=6cm,
+  xlabel={$p$}, ylabel={tokens per sentence},
+  symbolic x coords={1,2,4,8,16,32,$\infty$}, xtick=data,
+  ymin=28.5, ymax=35.5,
+  grid=major, grid style={draw=soft},
+  legend style={font=\small, at={(0.97,0.97)}, anchor=north east, draw=none, fill=white},
+  legend cell align=left,
+  tick label style={font=\small}, label style={font=\small}]
+\addplot[mark=*, thick, color=pfair] coordinates
+  {(1,35.00) (2,34.68) (4,34.21) (8,33.63) (16,33.08) (32,32.68) ($\infty$,32.06)};
+\addplot[mark=triangle*, thick, color=hybrid] coordinates
+  {(1,34.44) (2,34.09) (4,33.61) (8,33.11) (16,32.71) (32,32.47) ($\infty$,32.29)};
+\addplot[mark=square*, thick, color=black!60] coordinates
+  {(1,32.47) (2,32.31) (4,32.09) (8,31.90) (16,31.89) (32,31.98) ($\infty$,32.45)};
+\addplot[mark=diamond*, thick, color=green!45!black] coordinates
+  {(1,29.03) (2,29.23) (4,29.56) (8,30.10) (16,30.75) (32,31.40) ($\infty$,32.49)};
+\legend{Hindi, Gujarati, Marathi, English}
+\end{axis}
+\end{tikzpicture}}
+\caption{Tokens per sentence of each language as $p$ grows (five-sample means of
+Table~\ref{tab:perlang}). The four costs converge; no Indian language rises above its
+cost at $p=1$.}
+\label{fig:perlang}
+\end{figure}
+
+\section{Vocabulary allocation by water-filling}
+\label{app:alloc}
+
+\paragraph{Problem.}
+Let the languages be grouped into clusters $c$ (one per script), with budget $k_c$ and
+share $\pi_c$ of the training text. The cost of a cluster as a function of its budget is
+modelled by a fitted curve $t_c(k)=a_c k^{-b_c}+d_c$ with $a_c,b_c>0$ and $d_c\ge 0$, which
+captures diminishing returns: each additional slot lowers the cost by less than the one
+before. The allocation problem is
+\begin{equation}
+  \min_{k\ge k^{\min}}\; \sum_c \pi_c\, t_c(k_c)^{p}
+  \qquad\text{s.t.}\qquad \sum_c k_c = K,
+  \label{eq:alloc-app}
+\end{equation}
+where $k^{\min}_c$ is the size of the cluster's alphabet.
+
+\paragraph{Convexity.}
+Each $t_c$ is positive, decreasing and convex in $k$ ($t_c''(k)=a_c b_c(b_c+1)k^{-b_c-2}>0$).
+For $p\ge1$, $x\mapsto x^{p}$ is convex and non-decreasing on $x\ge0$, so
+$t_c(k)^{p}$ is convex by the composition rule, the objective is a positive combination of
+convex functions, and the constraint set is a polyhedron. Problem~\eqref{eq:alloc-app} is
+therefore a convex program, and any KKT point is a global minimiser.
+
+\paragraph{KKT condition and water-filling.}
+With multiplier $\mu$ for the budget constraint, stationarity gives, for every cluster with
+$k_c>k^{\min}_c$,
+\begin{equation}
+  g_c(k_c) \;\equiv\; p\,\pi_c\, t_c(k_c)^{p-1}\,\bigl|t_c'(k_c)\bigr| \;=\; \mu,
+\end{equation}
+and $g_c(k^{\min}_c)\le\mu$ for clusters at their lower bound. The left side is the marginal
+reduction in the objective from one more slot, and it is strictly decreasing in $k_c$, so
+for a given $\mu$ each $k_c(\mu)$ is found by bisection, and $\sum_c k_c(\mu)$ is decreasing
+in $\mu$. An outer bisection on $\mu$ then meets the budget $\sum_c k_c=K$. At the optimum,
+one more slot is worth the same to every cluster that is not at its lower bound; $p=1$
+gives the compression-optimal split, and larger $p$ moves slots towards clusters whose cost
+is high.
+
+\paragraph{Fitting the curves.}
+For each cluster we train tokenizers on the cluster's languages alone at a few budgets
+(2k, 4k, 8k, 16k, 32k), measure the share-weighted tokens per sentence of its languages on
+FLORES dev, and fit $(a_c,b_c,d_c)$ by least squares (a grid over $b_c$ with the linear
+parameters solved in closed form). The script \texttt{allocate.py} performs the fit, the
+water-filling, and the construction of the final tokenizer, which trains one tokenizer per
+cluster at its budget and merges them. Because the alphabets of the clusters overlap
+(digits, punctuation, Latin letters inside Indic text), the budgets are topped up so that
+every merged tokenizer has $K$ entries, like the joint tokenizer it is compared with.
+
+\section{Implementation details}
+\label{app:impl}
+
+\paragraph{Preprocessing.}
+Training lines are NFC-normalised; lines shorter than 20 characters and exact duplicates
+are removed. Words are whitespace-separated and start with a word marker. The base alphabet
+contains every character that occurs at least five times in the training text; rarer
+characters map to a single unknown symbol (fewer than 30 occurrences per language on
+devtest).
+
+\paragraph{Lazy evaluation.}
+Every pair keeps an entry in a max-heap keyed by its last computed score and stamped with
+the step at which it was computed. At each step the top entry is popped; if its stamp is the
+current step, it is the exact maximiser, since every other stored score is an upper bound on
+that pair's current score (Proposition~\ref{prop:lazy}); otherwise its score is recomputed
+with the current weights and it is pushed back. Pairs that contain the new symbol are
+pushed with their exact scores after each merge. For $p=\infty$ there is one heap per
+language keyed by the pair's count in that language, and the heap of the worst-off language
+is popped; the hybrid schedule rebuilds the heaps at the switch; the Worst-$N$ rule rebuilds
+them whenever its pooled set changes. With the morphology penalty, an occurrence whose
+junction is a morpheme boundary contributes $(1-\lambda)$ instead of 1; for
+$0\le\lambda\le1$ every term stays non-negative and non-increasing, so the bound of
+Proposition~\ref{prop:lazy} still holds.
+
+\paragraph{Training time (planned).}
+Table~\ref{tab:speed} reports the time to train a 32k vocabulary on 140 million characters
+with lazy evaluation and with full rescoring, and the average number of heap re-checks per
+merge, for $p\in\{1,8,\infty\}$ and for 4 and 14 languages.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccc}
+\toprule
+Languages & $p$ & Lazy (s) & Full rescoring (s) & Re-checks/merge\\
+\midrule
+4 & 1 & -- & -- & --\\
+4 & 8 & -- & -- & --\\
+4 & $\infty$ & -- & -- & --\\
+14 & 1 & -- & -- & --\\
+14 & 8 & -- & -- & --\\
+14 & $\infty$ & -- & -- & --\\
+\bottomrule
+\end{tabular}
+\caption{Training time with and without lazy evaluation.}
+\label{tab:speed}
+\end{table}
+
+\paragraph{Language-model experiment (planned).}
+Each language model is a 6-layer GPT-2 style transformer (512 dimensions, 8 heads, context
+512) trained for the same number of epochs over the same training text for every
+tokenizer, with AdamW (learning rate $6\times10^{-4}$, cosine decay, 200 warm-up steps,
+batches of 32 sequences). Bits per byte on FLORES devtest are computed per language from
+the summed negative log-likelihood of each sentence, started with an end-of-sequence
+symbol, divided by the UTF-8 length of the sentence.

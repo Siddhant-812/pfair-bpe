@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{enumitem}
+\usepackage{flafter}
+\usepackage[table]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ---------------------------------------------------------------------
+% Theorems and operators (used in Sections 4 and 6)
+% ---------------------------------------------------------------------
+\newtheorem{proposition}{Proposition}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% ---------------------------------------------------------------------
+% Colours for the front figure and the per-language plot (Sections 5, 8)
+% ---------------------------------------------------------------------
+\definecolor{pfair}{HTML}{0B3D91}
+\definecolor{hybrid}{HTML}{D9622B}
+\definecolor{soft}{HTML}{DDE3EC}
+
+% ---------------------------------------------------------------------
+% Placeholder and box styles
+% ---------------------------------------------------------------------
+\definecolor{pframe}{HTML}{3C4A5C}
+\definecolor{pback}{HTML}{F7F8FA}
+\definecolor{plabel}{HTML}{3C4A5C}
+\definecolor{pslot}{HTML}{1F5FA8}
+
+% {placeholder} slots in blue monospace
+\newcommand{\ph}[1]{\textcolor{pslot}{\texttt{\{#1\}}}}
+% small-caps style section labels
+\newcommand{\psec}[1]{\par\medskip{\footnotesize\sffamily\bfseries\color{plabel}#1}\par\smallskip}
+
+\newtcolorbox{pslotbox}[1]{enhanced, colback=white, colframe=gray!30,
+  boxrule=0.4pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small, title={#1}, fonttitle=\footnotesize\sffamily\bfseries,
+  coltitle=plabel, colbacktitle=gray!10, toptitle=1pt, bottomtitle=1pt}
+
+% Table palette: cool slate blue
+\definecolor{headergray}{HTML}{DCE6F2}   % header: soft blue
+\definecolor{rowgray}{HTML}{F5F8FC}      % zebra rows: barely-there blue
+\definecolor{overallgray}{HTML}{E8EEF7}  % overall row: between the two
+
+% Table palette: sage
+% \definecolor{headergray}{HTML}{DDEBE4}
+% \definecolor{rowgray}{HTML}{F5FAF7}
+% \definecolor{overallgray}{HTML}{E8F2EC}
+
+\title{One Dial from Compression to Parity:\\ A Power-Mean View of Fair BPE Tokenization}
+
+\author{
+  Vaibhav Rathore \quad Siddhant Gole \\
+  IIT Bombay \\
+  \texttt{\{25d1387,26d1384\}@iitb.ac.in}
+}
+
+\begin{document}
+\maketitle
+
+\input{sec/0_abstract}
+
+\input{sec/1_intro}
+
+\input{sec/2_related_works}
+
+\input{sec/3_problem}
+
+\input{sec/4_methodology}
+
+\input{sec/5_results}
+
+\input{sec/6_ablation}
+
+\input{sec/7_conclusion}
+
+\bibliography{main}
+
+\clearpage
+\appendix
+\input{sec/8_supple}
+
+\end{document}

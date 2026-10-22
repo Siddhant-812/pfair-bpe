@@ -1,0 +1,5 @@
+method,vocab,tokens,bytes_per_token,chars_per_token,gini_per_byte,gini_per_char,gini_per_line,train_bytes_per_token
+Classical,32000,132494,8.7199,3.9386,0.1855,0.0453,0.0380,6.9040
+Parity-aware,32000,130933,8.8238,3.9856,0.2202,0.0092,0.0030,6.6267
+p=2,32000,131842,8.7630,3.9581,0.1890,0.0422,0.0347,6.9019
+p=4,32000,131095,8.8129,3.9807,0.1938,0.0371,0.0298,6.8916

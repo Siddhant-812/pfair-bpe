@@ -1,0 +1,54 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We address the trade-off between compression and cross-lingual parity in subword
+tokenization by treating the per-language token costs as a vector of objectives. Its
+power-mean scalarisation yields a greedy merge rule that weights each language's pair counts
+by its current cost raised to the power $p-1$, which contains classical BPE at $p=1$ and
+Parity-aware BPE as $p\to\infty$. Since pair scores never increase under this rule, the
+resulting $p$-fair BPE trains exactly by lazy evaluation, about 20 times faster than full
+rescoring. On Hindi, Marathi, Gujarati and English, raising $p$ traces a monotone and
+repeatable front, on which a 40\% reduction in the Gini coefficient costs 0.6\% of
+compression. The front coincides with that of the hybrid schedule, so the contribution is a
+principled formulation of the existing trade-off rather than a tokenizer that dominates it.
+Nevertheless, the formulation exposes a difference in how cost is distributed, since
+$p$-fair BPE makes no Indian language more expensive than under classical BPE. Moreover, our
+analysis shows that the cost unit and the training data balance decide the size, and even
+the direction, of the disparity more than the merge rule does.
+
+\noindent\textbf{Practical takeaways.} First, measure the cost on parallel content and not
+per byte, since a per-byte cost inverts the parity rule across scripts. Second, report the
+data balance alongside any parity result, since the same method removes 1.1\% or 7.0\% of
+compression depending on how much English is present. Third, choose $p$ by the acceptable
+loss in compression, since most of the disparity is removed well before full parity.
+
+\noindent\textbf{Open directions.} The formulation extends naturally to further axes and
+settings: a morphology penalty within the same rule (Section~\ref{sec:morph}), a convex
+allocation of the vocabulary across scripts (Section~\ref{sec:alloc}), large vocabularies
+where Parity-aware BPE loses equity \citep{lee2026}, and a $p$-fair variant of Unigram
+pruning \citep{kudo2018}.
+
+\section*{Limitations}
+
+\noindent\textbf{Scale and languages.} We train on 140 million characters and evaluate on
+1012 parallel sentences in four languages, three of which are closely related. The
+sensitivity runs in Table~\ref{tab:sens} are single runs. Results may differ for larger
+corpora, more languages or more distant scripts.
+
+\noindent\textbf{Data balance as a design choice.} The size of the disparity depends mainly
+on how much English is in the training text, and our main setting with four times as much
+English is an assumption. Our conclusions should be read together with
+Table~\ref{tab:sens}.
+
+\noindent\textbf{Greedy, first-order steps.} Proposition~\ref{prop:rule} is a first-order
+argument, and it assumes that pair frequencies in the development set match those in the
+training text. Greedy merging carries no optimality guarantee for $p>1$, so the measured
+curve is the front of the greedy algorithm and not the Pareto front of Eq.~\eqref{eq:obj}.
+
+\noindent\textbf{Re-implemented baselines.} Parity-aware BPE and the hybrid schedule are our
+own character-level implementations, without the moving-window variant, whereas the
+original is byte-level.
+
+\noindent\textbf{Intrinsic evaluation.} We measure token cost and compression only. Lower
+token cost does not by itself guarantee better downstream performance, and a model-level
+evaluation is required to confirm that the gains matter in use.

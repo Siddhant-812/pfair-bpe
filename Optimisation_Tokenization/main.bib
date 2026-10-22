@@ -1,0 +1,341 @@
+@inproceedings{
+arnett2025,
+title={Evaluating Morphological Alignment of Tokenizers in 70 Languages},
+author={Catherine Arnett and Marisa Hudspeth and Brendan O'Connor},
+booktitle={Tokenization Workshop},
+year={2025},
+url={https://openreview.net/forum?id=XYRri1s6pP}
+}
+
+@book{boyd2004,
+  title     = {Convex Optimization},
+  author    = {Boyd, Stephen and Vandenberghe, Lieven},
+  publisher = {Cambridge University Press},
+  year      = {2004}
+}
+
+@inproceedings{brahma2026,
+    title = "Multilingual Tokenization through the Lens of {I}ndian Languages: Challenges and Insights",
+    author = "Brahma, Maharaj  and
+      Karthika, N J  and
+      Verma, Rajat  and
+      Naidu, Nagasai Saketh  and
+      Saluja, Rohit  and
+      Desarkar, Maunendra Sankar  and
+      Ramakrishnan, Ganesh",
+    editor = "Liakata, Maria  and
+      Moreira, Viviane P.  and
+      Zhang, Jiajun  and
+      Jurgens, David",
+    booktitle = "Findings of the {A}ssociation for {C}omputational {L}inguistics: {ACL} 2026",
+    month = jul,
+    year = "2026",
+    address = "San Diego, California, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.findings-acl.1632/",
+    doi = "10.18653/v1/2026.findings-acl.1632",
+    pages = "32614--32632",
+    ISBN = "979-8-89176-395-1",
+    abstract = "Tokenization plays a pivotal role in NLP and is fundamental to training language models. However, existing tokenizers are often skewed towards high-resource languages, limiting their effectiveness for linguistically diverse and morphologically rich languages such as those in the Indian subcontinent. In this work, we present a comprehensive empirical study of multilingual tokenization across 17 Indic languages spanning 11 scripts and two language families. We systematically evaluate the effects of (i) widely used subword algorithms: BPE (CITATION) and Unigram LM (CITATION), (ii) script and orthography-aware normalization, (iii) vocabulary size, and (iv) multilingual vocabulary construction strategies. We use a combination of intrinsic and extrinsic evaluations to obtain the following observations: (i) script-specific normalization improves tokenization quality, (ii) Unigram LM better preserves morphological boundaries than BPE, (iii) cluster-based vocabulary construction shows improvement in downstream tasks compared to the joint method. Our findings highlight the importance of linguistically informed design choices in multilingual tokenization and offer practical guidance for building effective tokenizers for low-resource and morphologically complex languages."
+}
+
+@inproceedings{foroutan2026,
+    title = "Parity-Aware Byte-Pair Encoding: Improving Cross-lingual Fairness in Tokenization",
+    author = "Foroutan, Negar  and
+      Meister, Clara  and
+      Paul, Debjit  and
+      Niklaus, Joel  and
+      Ahmadi, Sina  and
+      Bosselut, Antoine  and
+      Sennrich, Rico",
+    editor = "Liakata, Maria  and
+      Moreira, Viviane P.  and
+      Zhang, Jiajun  and
+      Jurgens, David",
+    booktitle = "Proceedings of the 64th Annual Meeting of the {A}ssociation for {C}omputational {L}inguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2026",
+    address = "San Diego, California, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.acl-long.342/",
+    doi = "10.18653/v1/2026.acl-long.342",
+    pages = "7514--7538",
+    ISBN = "979-8-89176-390-6",
+    abstract = "Tokenization is the first{---}and often least scrutinized{---}step of most NLP pipelines. Standard algorithms for learning tokenizers rely on frequency-based objectives, which favor languages dominant in the training data and consequently leave lower-resource languages with tokenizations that are disproportionately longer, morphologically implausible, or even riddled with {\ensuremath{<}}UNK{\ensuremath{>}} placeholders. This phenomenon ultimately amplifies computational and financial inequalities between users from different language backgrounds. To remedy this, we introduce Parity-aware Byte Pair Encoding (BPE), a variant of the widely-used BPE algorithm. At every merge step, Parity-aware BPE applies a fair-max rule that maximizes the compression gain of the currently worst-compressed language, trading a small amount of global compression for cross-lingual parity. We find empirically that Parity-aware BPE reduces tokenization inequality{---}operationalized by the Gini coefficient of per-language token costs{---}by up to 89{\%} relative to Classical BPE. This comes with negligible impact on global compression rate and no evidence of systematic degradation in downstream LM performance."
+}
+
+@article{gage1994,
+  title   = {A New Algorithm for Data Compression},
+  author  = {Gage, Philip},
+  journal = {The C Users Journal},
+  volume  = {12},
+  number  = {2},
+  pages   = {23--38},
+  year    = {1994}
+}
+
+@inproceedings{khan2024,
+    title = "{I}ndic{LLMS}uite: A Blueprint for Creating Pre-training and Fine-Tuning Datasets for {I}ndian Languages",
+    author = "Khan, Mohammed Safi Ur Rahman  and
+      Mehta, Priyam  and
+      Sankar, Ananth  and
+      Kumaravelan, Umashankar  and
+      Doddapaneni, Sumanth  and
+      B, Suriyaprasaad  and
+      G, Varun  and
+      Jain, Sparsh  and
+      Kunchukuttan, Anoop  and
+      Kumar, Pratyush  and
+      Dabre, Raj  and
+      Khapra, Mitesh M.",
+    editor = "Ku, Lun-Wei  and
+      Martins, Andre  and
+      Srikumar, Vivek",
+    booktitle = "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2024",
+    address = "Bangkok, Thailand",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.acl-long.843/",
+    doi = "10.18653/v1/2024.acl-long.843",
+    pages = "15831--15879",
+    abstract = "Despite the considerable advancements in English LLMs, the progress in building comparable models for other languages has been hindered due to the scarcity of tailored resources. Our work aims to bridge this divide by introducing an expansive suite of resources specifically designed for the development of Indic LLMs, covering 22 languages, containing a total of 251B tokens and 74.8M instruction-response pairs. Recognizing the importance of both data quality and quantity, our approach combines highly curated manually verified data, unverified yet valuable data, and synthetic data. We build a clean, open-source pipeline for curating pre-training data from diverse sources, including websites, PDFs, and videos, incorporating best practices for crawling, cleaning, flagging, and deduplication. For instruction-fine tuning, we amalgamate existing Indic datasets, translate/transliterate English datasets into Indian languages, and utilize LLaMa2 and Mixtral models to create conversations grounded in articles from Indian Wikipedia and Wikihow. Additionally, we address toxicity alignment by generating toxic prompts for multiple scenarios and then generate non-toxic responses by feeding these toxic prompts to an aligned LLaMa2 model. We hope that the datasets, tools, and resources released as a part of this work will not only propel the research and development of Indic LLMs but also establish an open-source blueprint for extending such efforts to other languages."
+}
+
+@inproceedings{kudo2018,
+    title = "Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates",
+    author = "Kudo, Taku",
+    editor = "Gurevych, Iryna  and
+      Miyao, Yusuke",
+    booktitle = "Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2018",
+    address = "Melbourne, Australia",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P18-1007/",
+    doi = "10.18653/v1/P18-1007",
+    pages = "66--75",
+    abstract = "Subword units are an effective way to alleviate the open vocabulary problems in neural machine translation (NMT). While sentences are usually converted into unique subword sequences, subword segmentation is potentially ambiguous and multiple segmentations are possible even with the same vocabulary. The question addressed in this paper is whether it is possible to harness the segmentation ambiguity as a noise to improve the robustness of NMT. We present a simple regularization method, subword regularization, which trains the model with multiple subword segmentations probabilistically sampled during training. In addition, for better subword sampling, we propose a new subword segmentation algorithm based on a unigram language model. We experiment with multiple corpora and report consistent improvements especially on low resource and out-of-domain settings."
+}
+
+@misc{lee2026,
+      title={Equity with Efficiency: An Empirical Study of Tokenizers for Multilingual Large Language Models}, 
+      author={Kieron Seven Jun Wei Lee and Muhammad Reza Qorib and Andrew Ivan Soegeng and Hwee Tou Ng},
+      year={2026},
+      eprint={2606.15044},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2606.15044}, 
+}
+
+@InProceedings{minoux1978,
+author="Minoux, Michel",
+editor="Stoer, J.",
+title="Accelerated greedy algorithms for maximizing submodular set functions",
+booktitle="Optimization Techniques",
+year="1978",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="234--243",
+abstract="Given a finite set E and a real valued function f on P(E) (the power set of E) the optimal subset problem (P) is to find S ⊂ E maximizing f over P(E). Many combinatorial optimization problems can be formulated in these terms. Here, a family of approximate solution methods is studied : the greedy algorithms.",
+isbn="978-3-540-35890-9"
+}
+
+
+@misc{nllb2022,
+      title={No Language Left Behind: Scaling Human-Centered Machine Translation}, 
+      author={NLLB Team and Marta R. Costa-jussà and James Cross and Onur Çelebi and Maha Elbayad and Kenneth Heafield and Kevin Heffernan and Elahe Kalbassi and Janice Lam and Daniel Licht and Jean Maillard and Anna Sun and Skyler Wang and Guillaume Wenzek and Al Youngblood and Bapi Akula and Loic Barrault and Gabriel Mejia Gonzalez and Prangthip Hansanti and John Hoffman and Semarley Jarrett and Kaushik Ram Sadagopan and Dirk Rowe and Shannon Spruit and Chau Tran and Pierre Andrews and Necip Fazil Ayan and Shruti Bhosale and Sergey Edunov and Angela Fan and Cynthia Gao and Vedanuj Goswami and Francisco Guzmán and Philipp Koehn and Alexandre Mourachko and Christophe Ropers and Safiyyah Saleem and Holger Schwenk and Jeff Wang},
+      year={2022},
+      eprint={2207.04672},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2207.04672}, 
+}
+
+@inproceedings{petrov2023,
+author = {Petrov, Aleksandar and Malfa, Emanuele La and Torr, Philip H.S. and Bibi, Adel},
+title = {Language model tokenizers introduce unfairness between languages},
+year = {2023},
+publisher = {Curran Associates Inc.},
+address = {Red Hook, NY, USA},
+abstract = {Recent language models have shown impressive multilingual performance, even when not explicitly trained for it. Despite this, there are concerns about the quality of their outputs across different languages. In this paper, we show how disparity in the treatment of different languages arises at the tokenization stage, well before a model is even invoked. The same text translated into different languages can have drastically different tokenization lengths, with differences up to 15 times in some cases. These disparities persist even for tokenizers that are intentionally trained for multilingual support. Character-level and byte-level models also exhibit over 4 times the difference in the encoding length for some language pairs. This induces unfair treatment for some language communities in regard to the cost of accessing commercial language services, the processing time and latency, as well as the amount of content that can be provided as context to the models. Therefore, we make the case that we should train future language models using multilingually fair subword tokenizers.},
+booktitle = {Proceedings of the 37th International Conference on Neural Information Processing Systems},
+articleno = {1608},
+numpages = {28},
+location = {New Orleans, LA, USA},
+series = {NIPS '23}
+}
+
+
+@inproceedings{rathore2026,
+  title     = {{SuTRA: Structurally-Unified Tokenization with Root Awareness}},
+  author    = {Vaibhav Rathore and Siddhant Gole and Dadhichi Telwadkar and Rooshil Bhatia and Maulik Ruparel and Siddharth Surekha and Neha Bhargava},
+  year      = {2026},
+  booktitle = {{Interspeech 2026}},
+  pages     = {7280--7285},
+  doi       = {10.21437/Interspeech.2026-291},
+  issn      = {2958-1796},
+}
+
+@inproceedings{sennrich2016,
+    title = "Neural Machine Translation of Rare Words with Subword Units",
+    author = "Sennrich, Rico  and
+      Haddow, Barry  and
+      Birch, Alexandra",
+    editor = "Erk, Katrin  and
+      Smith, Noah A.",
+    booktitle = "Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2016",
+    address = "Berlin, Germany",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P16-1162/",
+    doi = "10.18653/v1/P16-1162",
+    pages = "1715--1725"
+}
+
+@inproceedings{zouhar2023,
+    title = "A Formal Perspective on Byte-Pair Encoding",
+    author = "Zouhar, Vil{\'e}m  and
+      Meister, Clara  and
+      Gastaldi, Juan  and
+      Du, Li  and
+      Vieira, Tim  and
+      Sachan, Mrinmaya  and
+      Cotterell, Ryan",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Findings of the Association for Computational Linguistics: ACL 2023",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.findings-acl.38/",
+    doi = "10.18653/v1/2023.findings-acl.38",
+    pages = "598--614",
+    abstract = "Byte-Pair Encoding (BPE) is a popular algorithm used for tokenizing data in NLP, despite being devised initially as a compression method.BPE appears to be a greedy algorithm at face value, but the underlying optimization problem that BPE seeks to solve has not yet been laid down. We formalize BPE as a combinatorial optimization problem. Via submodular functions, we prove that the iterative greedy version is a 1/sigma*(1-e(-sigma))-approximation of an optimal merge sequence, where sigma is the total backward curvature with respect to the optimal merge sequence. Empirically the lower bound of the approximation is approx0.37.We provide a faster implementation of BPE which improves the runtime complexity from O(NM) to O(N log M), where N is the sequence length and M is the merge count. Finally, we optimize the brute-force algorithm for optimal BPE using memoization."
+}
+
+@inproceedings{kanjirangat2026,
+    title = "Evaluating Multilingual Tokenization under Worst-N Parity-Aware {BPE}",
+    author = "Kanjirangat, Vani  and
+      Kletz, David  and
+      Samardzic, Tanja  and
+      Dolamic, Ljiljana  and
+      Rinaldi, Fabio",
+    editor = "Huang, Kaiyu  and
+      Mo, Fengran  and
+      Chen, Pinzhen  and
+      Jiang, Meng",
+    booktitle = "Proceedings of the 1st Workshop on Multilinguality in the Era of Large Language Models ({M}e{LLM} 2026)",
+    month = jul,
+    year = "2026",
+    address = "San Diego, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.mellm-1.21/",
+    doi = "10.18653/v1/2026.mellm-1.21",
+    pages = "221--228",
+    ISBN = "979-8-89176-430-9",
+    abstract = "Improving the fairness of a language model is a goal that applies at every level of the model. In this paper, we evaluate a method targeting a foundational level: tokenization.We present a multilingual evaluation of parity-aware tokenization under worst-$N$ optimization, extending PA-BPE to jointly optimize over the $N$ worst-compressed languages.We evaluate this formulation for $N > 1$ across vocabulary sizes of 16K and 32K on the languages from the flores+ benchmark, using metrics that capture both efficiency and structural alignment.Our results reveal that the effects of increasing $N$ are inconsistent across metrics and do not lead to major gains. Efficiency-oriented and boundary-level metrics show a modest tendency to improve at higher values of $N$, while structural alignment metrics (such as AST alignment and boundary crossing) exhibit no clear pattern, suggesting that compression fairness and linguistic structure are mainly orthogonal objectives. Script-level analysis further reveals uneven effects across writing systems, with several non-Latin scripts showing greater sensitivity to increasing $N$."
+}
+
+@inproceedings{
+chung2023unimax,
+title={UniMax: Fairer and More Effective Language Sampling for Large-Scale Multilingual Pretraining},
+author={Hyung Won Chung and Xavier Garcia and Adam Roberts and Yi Tay and Orhan Firat and Sharan Narang and Noah Constant},
+booktitle={The Eleventh International Conference on Learning Representations },
+year={2023},
+url={https://openreview.net/forum?id=kXwdL1cWOAi}
+}
+
+@inproceedings{limisiewicz2024myte,
+   title={MYTE: Morphology-Driven Byte Encoding for Better and Fairer Multilingual Language Modeling},
+   url={http://dx.doi.org/10.18653/v1/2024.acl-long.804},
+   DOI={10.18653/v1/2024.acl-long.804},
+   booktitle={Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+   publisher={Association for Computational Linguistics},
+   author={Limisiewicz, Tomasz and Blevins, Terra and Gonen, Hila and Ahia, Orevaoghene and Zettlemoyer, Luke},
+   year={2024},
+   pages={15059–15076} }
+
+@inproceedings{zheng2021vocap,
+    title = "Allocating Large Vocabulary Capacity for Cross-Lingual Language Model Pre-Training",
+    author = "Zheng, Bo  and
+      Dong, Li  and
+      Huang, Shaohan  and
+      Singhal, Saksham  and
+      Che, Wanxiang  and
+      Liu, Ting  and
+      Song, Xia  and
+      Wei, Furu",
+    editor = "Moens, Marie-Francine  and
+      Huang, Xuanjing  and
+      Specia, Lucia  and
+      Yih, Scott Wen-tau",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-main.257/",
+    doi = "10.18653/v1/2021.emnlp-main.257",
+    pages = "3203--3215",
+    abstract = "Compared to monolingual models, cross-lingual models usually require a more expressive vocabulary to represent all languages adequately. We find that many languages are under-represented in recent cross-lingual language models due to the limited vocabulary capacity. To this end, we propose an algorithm VoCap to determine the desired vocabulary capacity of each language. However, increasing the vocabulary size significantly slows down the pre-training speed. In order to address the issues, we propose k-NN-based target sampling to accelerate the expensive softmax. Our experiments show that the multilingual vocabulary learned with VoCap benefits cross-lingual language model pre-training. Moreover, k-NN-based target sampling mitigates the side-effects of increasing the vocabulary size while achieving comparable performance and faster pre-training speed. The code and the pretrained multilingual vocabularies are available at \url{https://github.com/bozheng-hit/VoCapXLM}."
+}
+
+@inproceedings{liang2023xlmv,
+    title = "{XLM}-{V}: Overcoming the Vocabulary Bottleneck in Multilingual Masked Language Models",
+    author = "Liang, Davis  and
+      Gonen, Hila  and
+      Mao, Yuning  and
+      Hou, Rui  and
+      Goyal, Naman  and
+      Ghazvininejad, Marjan  and
+      Zettlemoyer, Luke  and
+      Khabsa, Madian",
+    editor = "Bouamor, Houda  and
+      Pino, Juan  and
+      Bali, Kalika",
+    booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.emnlp-main.813/",
+    doi = "10.18653/v1/2023.emnlp-main.813",
+    pages = "13142--13152",
+    abstract = "Large multilingual language models typically rely on a single vocabulary shared across 100+ languages. As these models have increased in parameter count and depth, vocabulary size has remained largely unchanged. This \textit{vocabulary bottleneck} limits the representational capabilities of multilingual models like XLM-R. In this paper, we introduce a new approach for scaling to very large multilingual vocabularies by de-emphasizing token sharing between languages with little lexical overlap and assigning vocabulary capacity to achieve sufficient coverage for each individual language. Tokenizations using our vocabulary are typically more semantically meaningful and shorter compared to XLM-R. Leveraging this improved vocabulary, we train XLM-V, a multilingual language model with a one million token vocabulary. XLM-V outperforms XLM-R on every task we tested on ranging from natural language inference (XNLI), question answering (MLQA, XQuAD, TyDiQA), to named entity recognition (WikiAnn). XLM-V is particularly effective on low-resource language tasks and outperforms XLM-R by 11.2{\%} and 5.8{\%} absolute on MasakhaNER and Americas NLI, respectively."
+}
+
+@book{miettinen1999,
+  title     = {Nonlinear Multiobjective Optimization},
+  author    = {Miettinen, Kaisa},
+  publisher = {Kluwer Academic Publishers},
+  year      = {1999}
+}
+
+@article{mo2000fair,
+  author={Mo, J. and Walrand, J.},
+  journal={IEEE/ACM Transactions on Networking}, 
+  title={Fair end-to-end window-based congestion control}, 
+  year={2000},
+  volume={8},
+  number={5},
+  pages={556-567},
+  keywords={Protocols;Convergence;Internet;Size control;Lyapunov method;Monitoring;Feedback;Throughput;IP networks;Jacobian matrices},
+  doi={10.1109/90.879343}}
+
+
+@article{atkinson1970,
+title = {On the measurement of inequality},
+journal = {Journal of Economic Theory},
+volume = {2},
+number = {3},
+pages = {244-263},
+year = {1970},
+issn = {0022-0531},
+doi = {https://doi.org/10.1016/0022-0531(70)90039-6},
+url = {https://www.sciencedirect.com/science/article/pii/0022053170900396},
+author = {Anthony B Atkinson}
+}

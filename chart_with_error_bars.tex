@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+\begin{axis}[
+  width=\linewidth, height=5cm,
+  xlabel={compression of training text (bytes/token) $\uparrow$},
+  ylabel={Gini of $t_\ell$ $\downarrow$},
+  label style={font=\scriptsize}, tick label style={font=\tiny},
+  grid=major, grid style={draw=soft},
+  enlarge x limits=0.08, enlarge y limits=0.1,
+  scaled y ticks=false, yticklabel style={/pgf/number format/fixed},
+  legend style={font=\tiny, at={(0.03,0.97)}, anchor=north west, draw=none, fill=none}]
+\addplot[mark=*, mark size=1.5pt, color=iitbblue,
+  error bars/.cd, x dir=both, x explicit, y dir=both, y explicit]
+  table[x=cr, y=gini, x error=cr_err, y error=gini_err, col sep=comma]{chart_pfair.csv};
+\addplot[only marks, mark=square*, mark size=1.5pt, color=accent,
+  error bars/.cd, x dir=both, x explicit, y dir=both, y explicit]
+  table[x=cr, y=gini, x error=cr_err, y error=gini_err, col sep=comma]{chart_hybrid.csv};
+\legend{$p$-fair ($p=1$ to $\infty$), Hybrid baseline}
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,23 @@
+{
+  "ps": "1,4,8,16,inf",
+  "hybrids": "0.5,0.75,0.9",
+  "worst_ns": "3",
+  "window": 100,
+  "alpha": 2.0,
+  "lambdas": "",
+  "morph_lexicon": "",
+  "morph_gold": "",
+  "pi_uniform": false,
+  "langs": "hin,mar,guj,ben,pan,ori,asm,san,tam,tel,kan,mal,urd,eng",
+  "vocab_size": 64000,
+  "unit": "line",
+  "chars_m": 20,
+  "eng_chars_m": 80,
+  "sizes": "",
+  "natural": false,
+  "total_chars_m": 400,
+  "part": 0,
+  "data": "/tmp/claude-0/-home-claude/81f3c0be-f02a-5899-bebf-d79bf4cd019b/scratchpad/l14/data",
+  "out": "/tmp/claude-0/-home-claude/81f3c0be-f02a-5899-bebf-d79bf4cd019b/scratchpad/l14/res",
+  "skip_data": true
+}
