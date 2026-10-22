@@ -120,4 +120,9 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
 ## 2026-10-23  E8 training-time table -> results_speed/
 - `nohup /private/tmp/claude-501/-Users-siddhant-Desktop-pfair-bpe/f8f0011d-0444-42b2-8e1a-8d058149434b/scratchpad/e8.sh > e8_speed.log 2>&1 &` PID 41521: `python3 speed_table.py --out results_speed` (4 languages, 32k)
   then the same with the 14 languages / data_l14 / 64k; lazy and naive, p = 1, 8, inf. Machine otherwise idle.
-- Findings: (pending)
+- PAUSED on request (2026-10-23) after the 4-language rows below; the processes were killed and the temporary model
+  folders removed. results_speed/timings.csv keeps the finished rows. To resume tomorrow run only the missing settings
+  (speed_table.py appends rows): e.g. `python3 speed_table.py --out results_speed --ps inf` for a missing 4-language
+  row, then `python3 speed_table.py --out results_speed --langs hin,mar,guj,ben,pan,ori,asm,san,tam,tel,kan,mal,urd,eng
+  --train-dir data_l14/train --dev-dir data_l14/flores/dev --vocab-size 64000` for the 14-language rows (~2 h).
+- Findings so far: lazy 4.6 s vs naive 120 s at p=1 (26x), 3.2 heap re-checks per merge (see timings.csv for the rest).
