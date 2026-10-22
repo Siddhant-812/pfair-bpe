@@ -205,39 +205,80 @@ bytes per token on the training text; single runs.}
 \label{tab:alloc}
 \end{table}
 
-\subsection{Scaling to 14 languages and natural data balance (planned)}
+\subsection{Scaling to 14 languages and natural data balance}
 \label{sec:multi}
 
 With four languages and one dominant language, the front is one-dimensional and a single
 switch point suffices to trace it, which may explain why the hybrid schedule matches
 $p$-fair BPE. To test the rule where several languages are under-served at different
-levels, we train on 14 languages in 10 scripts (Hindi, Marathi, Gujarati, Bengali, Punjabi,
-Odia, Assamese, Sanskrit, Tamil, Telugu, Kannada, Malayalam, Urdu and English) with the
-amount of text of each language proportional to the size of its Sangraha split, so that the
-largest language has about 40 times the text of the smallest, at a 64k vocabulary
-(Table~\ref{tab:multi}). At matched compression, $p$-fair BPE is -- than the hybrid by --
-in Gini, -- than Worst-$N$ by --, and the largest increase of any language's cost over its
-classical cost is -- for $p$-fair BPE and -- for the hybrid.
+levels, we trained on 14 languages in 10 scripts (Hindi, Marathi, Gujarati, Bengali,
+Punjabi, Odia, Assamese, Sanskrit, Tamil, Telugu, Kannada, Malayalam, Urdu and English)
+with the amount of text of each language proportional to the size of its Sangraha split,
+so that Hindi (75M characters) has 33 times the text of Assamese (2.2M),
+at a 64k vocabulary, with $p$ up to 128, on three samples of training text
+(Table~\ref{tab:multi}; per-language costs in Appendix~\ref{app:multi}).
+
+The disparity is larger than with four languages, and it is no longer an English problem.
+Under classical BPE, the Gini coefficient is 0.067$\pm$0.001, a Punjabi sentence costs
+43.6 tokens against 30.4 for Bengali, and English, with 15\% of the text, is
+the second-cheapest language and leads only 14\% of the merges. Raising $p$ again
+traces a monotone front in three of three samples, from 0.067 to 0.004 in Gini and from
+8.94 to 8.34 bytes per token. At $p=8$ the Gini coefficient falls by 44\% for
+1.0\% of compression, and at $p=16$ by 62\% for 2.1\%; compression on the
+balanced test set peaks at $p=16$ (9.13 vs.\ 8.92 bytes per token).
+
+At matched compression, the outcome depends on where on the front the comparison is made.
+At the fair end, $p$-fair BPE is fairer than the hybrid with 50\% classical merges by
+$+0.0030\pm0.0003$ in Gini (3 of 3 samples); at 75\% the two tie ($-0.0002\pm0.0001$); at 90\% the
+hybrid is fairer by $-0.0023\pm0.0002$ (3 of 3). Worst-$N$ with $N\in\{2,3,5\}$ and the moving
+window again land at the parity end, within 0.0002 of the front. These differences are ten
+times the sample-to-sample spread (at most 0.0007) but about 5\% of the span of
+the front, so the schedules still trace the same curve as $p$-fair BPE. The front is thus
+determined by the data rather than by the rule, and neither interpolation dominates.
+
+The rules differ in who pays. Every rule that moves towards parity, $p$-fair BPE included,
+raises the cheapest languages: Bengali goes from 30.4 to 32.7 tokens per sentence at
+$p=8$ and to 37.3 at $p=\infty$, and Hindi from 33.0 to 33.8 and 36.9
+(Appendix~\ref{app:multi}). The four-language observation that no Indian language becomes
+more expensive therefore does not generalise. What does hold is a statement about the
+under-served languages, those that cost more than the classical mean (Punjabi, Odia,
+Assamese, Sanskrit, Kannada, Malayalam and Urdu, plus Gujarati in two of the three
+samples): $p$-fair BPE never raises any of them, at any $p$, with a largest cost ratio
+against classical BPE between 0.968 and 0.995, whereas the hybrid raises one to three of
+them in every sample (Malayalam in all three, Gujarati in two, Kannada in one), by up to 1.2\% at 75\% and 2.3\%
+at 90\% classical merges (last column of Table~\ref{tab:multi}). The parity rule, Worst-$N$
+and the window also leave the under-served languages at or below their classical cost, but
+only at the parity end of the front.
 
 \begin{table*}[t]
 \centering
 \small
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
-Tokenizer & Gini $\downarrow$ & Max/min $\downarrow$ & Compression $\uparrow$ & Worst regression vs.\ classical $\downarrow$\\
+Tokenizer & Gini $\downarrow$ & Max/min $\downarrow$ & Compression $\uparrow$ & Gini diff.\ at matched compr. & Under-served, max ratio\\
 \midrule
-Classical ($p=1$) & -- & -- & -- & 1.000\\
-$p=4$ & -- & -- & -- & --\\
-$p=8$ & -- & -- & -- & --\\
-$p=16$ & -- & -- & -- & --\\
-Parity-aware ($p=\infty$) & -- & -- & -- & --\\
-Hybrid, 75\% classical & -- & -- & -- & --\\
-Worst-$N$, $N=3$ & -- & -- & -- & --\\
-Moving window & -- & -- & -- & --\\
+Classical ($p=1$) & $0.0665\pm0.0007$ & 1.43 & $8.941\pm0.014$ & -- & 1.000\\
+$p=4$ & $0.0488\pm0.0002$ & 1.29 & $8.910\pm0.013$ & -- & 0.983\\
+$p=8$ & $0.0370\pm0.0004$ & 1.21 & $8.847\pm0.012$ & -- & 0.973\\
+$p=16$ & $0.0250\pm0.0002$ & 1.14 & $8.749\pm0.011$ & -- & 0.968\\
+$p=32$ & $0.0151\pm0.0002$ & 1.08 & $8.640\pm0.009$ & -- & 0.971\\
+$p=128$ & $0.0046\pm0.0001$ & 1.03 & $8.472\pm0.007$ & -- & 0.980\\
+Parity-aware ($p=\infty$) & $0.0043\pm0.0001$ & 1.03 & $8.338\pm0.008$ & -- & 0.991\\
+\midrule
+Hybrid, 50\% classical & $0.0106\pm0.0002$ & 1.08 & $8.528\pm0.006$ & $+0.0030\pm0.0003$ & 0.993\\
+Hybrid, 75\% classical & $0.0294\pm0.0002$ & 1.19 & $8.786\pm0.010$ & $-0.0002\pm0.0001$ & 1.012\\
+Hybrid, 90\% classical & $0.0439\pm0.0002$ & 1.28 & $8.896\pm0.012$ & $-0.0023\pm0.0002$ & 1.023\\
+Worst-$N$, $N=3$ & $0.0044\pm0.0003$ & 1.03 & $8.341\pm0.005$ & $-0.0000\pm0.0001$ & 0.992\\
+Worst-$N$, $N=5$ & $0.0042\pm0.0002$ & 1.02 & $8.349\pm0.011$ & $-0.0001\pm0.0002$ & 0.989\\
+Moving window & $0.0042\pm0.0001$ & 1.03 & $8.401\pm0.007$ & $-0.0002\pm0.0001$ & 0.980\\
 \bottomrule
 \end{tabular}
-\caption{Fourteen languages at natural data balance, 64k vocabulary. ``Worst regression''
-is $\max_\ell t_\ell/t_\ell^{\mathrm{classical}}$ over the non-English languages.}
+\caption{Fourteen languages at natural data balance, 64k vocabulary, mean $\pm$ standard
+deviation over three samples of training text. Compression is bytes per token on the
+training text. ``Gini diff.'' is the baseline's Gini minus that of the $p$-fair front at the
+same compression (positive: $p$-fair fairer). ``Under-served, max ratio'' is
+$\max_\ell t_\ell/t_\ell^{\mathrm{classical}}$ over the languages that cost more than the
+classical mean; a value above 1 means the rule made an under-served language more expensive.}
 \label{tab:multi}
 \end{table*}
 

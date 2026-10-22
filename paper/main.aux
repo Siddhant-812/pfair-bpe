@@ -847,15 +847,13 @@
 \@LN{717}{8}
 \@LN{718}{8}
 \@LN{719}{8}
-\citation{lee2026}
-\citation{kudo2018}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Vocabulary allocation across scripts: three scripts at a total budget of 32k (main setting) and ten scripts at 64k (14 languages at natural balance). Compression is bytes per token on the training text; single runs.}}{10}{table.caption.8}\protected@file@percent }
 \newlabel{tab:alloc}{{7}{10}{Vocabulary allocation across scripts: three scripts at a total budget of 32k (main setting) and ten scripts at 64k (14 languages at natural balance). Compression is bytes per token on the training text; single runs}{table.caption.8}{}}
 \def\@LN@column{2}
 \@LN{720}{9}
 \@LN{721}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Scaling to 14 languages and natural data balance (planned)}{10}{subsection.6.5}\protected@file@percent }
-\newlabel{sec:multi}{{6.5}{10}{Scaling to 14 languages and natural data balance (planned)}{subsection.6.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Scaling to 14 languages and natural data balance}{10}{subsection.6.5}\protected@file@percent }
+\newlabel{sec:multi}{{6.5}{10}{Scaling to 14 languages and natural data balance}{subsection.6.5}{}}
 \@LN{722}{9}
 \@LN{723}{9}
 \@LN{724}{9}
@@ -874,8 +872,6 @@
 \@LN{737}{9}
 \@LN{738}{9}
 \@LN{739}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Language-model evaluation (planned)}{10}{subsection.6.6}\protected@file@percent }
-\newlabel{sec:downstream}{{6.6}{10}{Language-model evaluation (planned)}{subsection.6.6}{}}
 \@LN{740}{9}
 \@LN{741}{9}
 \@LN{742}{9}
@@ -889,15 +885,13 @@
 \@LN{750}{9}
 \@LN{751}{9}
 \@LN{752}{9}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{10}{section.7}\protected@file@percent }
-\newlabel{sec:conclusion}{{7}{10}{Conclusion}{section.7}{}}
 \@LN{753}{9}
 \@LN{754}{9}
 \@LN{755}{9}
 \@LN{756}{9}
-\def\@LN@column{1}
 \@LN{757}{9}
 \@LN{758}{9}
+\def\@LN@column{1}
 \@LN{759}{9}
 \@LN{760}{9}
 \@LN{761}{9}
@@ -927,6 +921,8 @@
 \@LN{785}{9}
 \@LN{786}{9}
 \@LN{787}{9}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Language-model evaluation (planned)}{10}{subsection.6.6}\protected@file@percent }
+\newlabel{sec:downstream}{{6.6}{10}{Language-model evaluation (planned)}{subsection.6.6}{}}
 \@LN{788}{9}
 \@LN{789}{9}
 \@LN{790}{9}
@@ -940,29 +936,22 @@
 \@LN{798}{9}
 \@LN{799}{9}
 \@LN{800}{9}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{10}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{7}{10}{Conclusion}{section.7}{}}
 \@LN{801}{9}
 \@LN{802}{9}
 \@LN{803}{9}
 \@LN{804}{9}
 \@LN{805}{9}
 \@LN{806}{9}
-\bibdata{main}
-\bibcite{arnett2025}{{1}{2025}{{Arnett et~al.}}{{Arnett, Hudspeth, and O'Connor}}}
-\bibcite{atkinson1970}{{2}{1970}{{Atkinson}}{{}}}
-\bibcite{brahma2026}{{3}{2026}{{Brahma et~al.}}{{Brahma, Karthika, Verma, Naidu, Saluja, Desarkar, and Ramakrishnan}}}
-\bibcite{chung2023unimax}{{4}{2023}{{Chung et~al.}}{{Chung, Garcia, Roberts, Tay, Firat, Narang, and Constant}}}
-\bibcite{foroutan2026}{{5}{2026}{{Foroutan et~al.}}{{Foroutan, Meister, Paul, Niklaus, Ahmadi, Bosselut, and Sennrich}}}
-\bibcite{gage1994}{{6}{1994}{{Gage}}{{}}}
-\bibcite{kanjirangat2026}{{7}{2026}{{Kanjirangat et~al.}}{{Kanjirangat, Kletz, Samardzic, Dolamic, and Rinaldi}}}
-\bibcite{khan2024}{{8}{2024}{{Khan et~al.}}{{Khan, Mehta, Sankar, Kumaravelan, Doddapaneni, B, G, Jain, Kunchukuttan, Kumar, Dabre, and Khapra}}}
-\bibcite{kudo2018}{{9}{2018}{{Kudo}}{{}}}
-\bibcite{lee2026}{{10}{2026}{{Lee et~al.}}{{Lee, Qorib, Soegeng, and Ng}}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Fourteen languages at natural data balance, 64k vocabulary. ``Worst regression'' is $\max _\ell t_\ell /t_\ell ^{\mathrm  {classical}}$ over the non-English languages.}}{11}{table.caption.9}\protected@file@percent }
-\newlabel{tab:multi}{{8}{11}{Fourteen languages at natural data balance, 64k vocabulary. ``Worst regression'' is $\max _\ell t_\ell /t_\ell ^{\mathrm {classical}}$ over the non-English languages}{table.caption.9}{}}
+\@LN{807}{9}
+\citation{lee2026}
+\citation{kudo2018}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Fourteen languages at natural data balance, 64k vocabulary, mean $\pm $ standard deviation over three samples of training text. Compression is bytes per token on the training text. ``Gini diff.'' is the baseline's Gini minus that of the $p$-fair front at the same compression (positive: $p$-fair fairer). ``Under-served, max ratio'' is $\max _\ell t_\ell /t_\ell ^{\mathrm  {classical}}$ over the languages that cost more than the classical mean; a value above 1 means the rule made an under-served language more expensive.}}{11}{table.caption.9}\protected@file@percent }
+\newlabel{tab:multi}{{8}{11}{Fourteen languages at natural data balance, 64k vocabulary, mean $\pm $ standard deviation over three samples of training text. Compression is bytes per token on the training text. ``Gini diff.'' is the baseline's Gini minus that of the $p$-fair front at the same compression (positive: $p$-fair fairer). ``Under-served, max ratio'' is $\max _\ell t_\ell /t_\ell ^{\mathrm {classical}}$ over the languages that cost more than the classical mean; a value above 1 means the rule made an under-served language more expensive}{table.caption.9}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Bits per byte of a 6-layer language model on FLORES-200 devtest (lower is better), one model per tokenizer, same training text.}}{11}{table.caption.10}\protected@file@percent }
 \newlabel{tab:downstream}{{9}{11}{Bits per byte of a 6-layer language model on FLORES-200 devtest (lower is better), one model per tokenizer, same training text}{table.caption.10}{}}
 \def\@LN@column{2}
-\@LN{807}{10}
 \@LN{808}{10}
 \@LN{809}{10}
 \@LN{810}{10}
@@ -986,12 +975,12 @@
 \@LN{828}{10}
 \@LN{829}{10}
 \@LN{830}{10}
+\def\@LN@column{1}
 \@LN{831}{10}
 \@LN{832}{10}
 \@LN{833}{10}
 \@LN{834}{10}
 \@LN{835}{10}
-\def\@LN@column{1}
 \@LN{836}{10}
 \@LN{837}{10}
 \@LN{838}{10}
@@ -1019,24 +1008,17 @@
 \@LN{860}{10}
 \@LN{861}{10}
 \@LN{862}{10}
-\@LN{863}{10}
-\@LN{864}{10}
-\@LN{865}{10}
-\@LN{866}{10}
-\@LN{867}{10}
-\@LN{868}{10}
-\@LN{869}{10}
-\@LN{870}{10}
-\@LN{871}{10}
-\@LN{872}{10}
-\@LN{873}{10}
-\@LN{874}{10}
-\@LN{875}{10}
-\@LN{876}{10}
-\@LN{877}{10}
-\@LN{878}{10}
-\@LN{879}{10}
-\@LN{880}{10}
+\bibdata{main}
+\bibcite{arnett2025}{{1}{2025}{{Arnett et~al.}}{{Arnett, Hudspeth, and O'Connor}}}
+\bibcite{atkinson1970}{{2}{1970}{{Atkinson}}{{}}}
+\bibcite{brahma2026}{{3}{2026}{{Brahma et~al.}}{{Brahma, Karthika, Verma, Naidu, Saluja, Desarkar, and Ramakrishnan}}}
+\bibcite{chung2023unimax}{{4}{2023}{{Chung et~al.}}{{Chung, Garcia, Roberts, Tay, Firat, Narang, and Constant}}}
+\bibcite{foroutan2026}{{5}{2026}{{Foroutan et~al.}}{{Foroutan, Meister, Paul, Niklaus, Ahmadi, Bosselut, and Sennrich}}}
+\bibcite{gage1994}{{6}{1994}{{Gage}}{{}}}
+\bibcite{kanjirangat2026}{{7}{2026}{{Kanjirangat et~al.}}{{Kanjirangat, Kletz, Samardzic, Dolamic, and Rinaldi}}}
+\bibcite{khan2024}{{8}{2024}{{Khan et~al.}}{{Khan, Mehta, Sankar, Kumaravelan, Doddapaneni, B, G, Jain, Kunchukuttan, Kumar, Dabre, and Khapra}}}
+\bibcite{kudo2018}{{9}{2018}{{Kudo}}{{}}}
+\bibcite{lee2026}{{10}{2026}{{Lee et~al.}}{{Lee, Qorib, Soegeng, and Ng}}}
 \bibcite{liang2023xlmv}{{11}{2023}{{Liang et~al.}}{{Liang, Gonen, Mao, Hou, Goyal, Ghazvininejad, Zettlemoyer, and Khabsa}}}
 \bibcite{limisiewicz2024myte}{{12}{2024}{{Limisiewicz et~al.}}{{Limisiewicz, Blevins, Gonen, Ahia, and Zettlemoyer}}}
 \bibcite{miettinen1999}{{13}{1999}{{Miettinen}}{{}}}
@@ -1045,10 +1027,25 @@
 \bibcite{petrov2023}{{16}{2023}{{Petrov et~al.}}{{Petrov, Malfa, Torr, and Bibi}}}
 \bibcite{rathore2026}{{17}{2026}{{Rathore et~al.}}{{Rathore, Gole, Telwadkar, Bhatia, Ruparel, Surekha, and Bhargava}}}
 \bibcite{sennrich2016}{{18}{2016}{{Sennrich et~al.}}{{Sennrich, Haddow, and Birch}}}
-\bibcite{nllb2022}{{19}{2022}{{Team et~al.}}{{Team, Costa-jussà, Cross, Çelebi, Elbayad, Heafield, Heffernan, Kalbassi, Lam, Licht, Maillard, Sun, Wang, Wenzek, Youngblood, Akula, Barrault, Gonzalez, Hansanti, Hoffman, Jarrett, Sadagopan, Rowe, Spruit, Tran, Andrews, Ayan, Bhosale, Edunov, Fan, Gao, Goswami, Guzmán, Koehn, Mourachko, Ropers, Saleem, Schwenk, and Wang}}}
-\bibcite{zheng2021vocap}{{20}{2021}{{Zheng et~al.}}{{Zheng, Dong, Huang, Singhal, Che, Liu, Song, and Wei}}}
-\bibcite{zouhar2023}{{21}{2023}{{Zouhar et~al.}}{{Zouhar, Meister, Gastaldi, Du, Vieira, Sachan, and Cotterell}}}
 \def\@LN@column{2}
+\@LN{863}{11}
+\@LN{864}{11}
+\@LN{865}{11}
+\@LN{866}{11}
+\@LN{867}{11}
+\@LN{868}{11}
+\@LN{869}{11}
+\@LN{870}{11}
+\@LN{871}{11}
+\@LN{872}{11}
+\@LN{873}{11}
+\@LN{874}{11}
+\@LN{875}{11}
+\@LN{876}{11}
+\@LN{877}{11}
+\@LN{878}{11}
+\@LN{879}{11}
+\@LN{880}{11}
 \@LN{881}{11}
 \@LN{882}{11}
 \@LN{883}{11}
@@ -1085,6 +1082,7 @@
 \@LN{914}{11}
 \@LN{915}{11}
 \@LN{916}{11}
+\def\@LN@column{1}
 \@LN{917}{11}
 \@LN{918}{11}
 \@LN{919}{11}
@@ -1106,7 +1104,6 @@
 \@LN{935}{11}
 \@LN{936}{11}
 \@LN{937}{11}
-\def\@LN@column{1}
 \@LN{938}{11}
 \@LN{939}{11}
 \@LN{940}{11}
@@ -1121,38 +1118,31 @@
 \@LN{949}{11}
 \@LN{950}{11}
 \@LN{951}{11}
+\@LN{952}{11}
+\@LN{953}{11}
+\@LN{954}{11}
+\@LN{955}{11}
+\@LN{956}{11}
+\@LN{957}{11}
+\@LN{958}{11}
+\@LN{959}{11}
+\@LN{960}{11}
+\@LN{961}{11}
+\@LN{962}{11}
+\@LN{963}{11}
+\@LN{964}{11}
+\@LN{965}{11}
+\@LN{966}{11}
+\@LN{967}{11}
+\@LN{968}{11}
+\@LN{969}{11}
+\@LN{970}{11}
+\@LN{971}{11}
+\@LN{972}{11}
+\bibcite{nllb2022}{{19}{2022}{{Team et~al.}}{{Team, Costa-jussà, Cross, Çelebi, Elbayad, Heafield, Heffernan, Kalbassi, Lam, Licht, Maillard, Sun, Wang, Wenzek, Youngblood, Akula, Barrault, Gonzalez, Hansanti, Hoffman, Jarrett, Sadagopan, Rowe, Spruit, Tran, Andrews, Ayan, Bhosale, Edunov, Fan, Gao, Goswami, Guzmán, Koehn, Mourachko, Ropers, Saleem, Schwenk, and Wang}}}
+\bibcite{zheng2021vocap}{{20}{2021}{{Zheng et~al.}}{{Zheng, Dong, Huang, Singhal, Che, Liu, Song, and Wei}}}
+\bibcite{zouhar2023}{{21}{2023}{{Zouhar et~al.}}{{Zouhar, Meister, Gastaldi, Du, Vieira, Sachan, and Cotterell}}}
 \def\@LN@column{2}
-\@LN{952}{12}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Per-language costs along the front}{13}{appendix.A}\protected@file@percent }
-\newlabel{app:perlang}{{A}{13}{Per-language costs along the front}{appendix.A}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Tokens per sentence of each language as $p$ grows (five-sample means of Table~\ref {tab:perlang}). The four costs converge; no Indian language rises above its cost at $p=1$.}}{13}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:perlang}{{2}{13}{Tokens per sentence of each language as $p$ grows (five-sample means of Table~\ref {tab:perlang}). The four costs converge; no Indian language rises above its cost at $p=1$}{figure.caption.13}{}}
-\@LN{953}{12}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Vocabulary allocation by water-filling}{13}{appendix.B}\protected@file@percent }
-\newlabel{app:alloc}{{B}{13}{Vocabulary allocation by water-filling}{appendix.B}{}}
-\@writefile{toc}{\contentsline {paragraph}{Problem.}{13}{section*.14}\protected@file@percent }
-\@LN{954}{12}
-\@LN{955}{12}
-\@LN{956}{12}
-\@LN{957}{12}
-\@LN{958}{12}
-\@LN{959}{12}
-\@LN{960}{12}
-\@LN{961}{12}
-\newlabel{eq:alloc-app}{{7}{13}{Problem}{equation.7}{}}
-\@LN{962}{12}
-\@LN{963}{12}
-\@writefile{toc}{\contentsline {paragraph}{Convexity.}{13}{section*.15}\protected@file@percent }
-\@LN{964}{12}
-\@LN{965}{12}
-\@LN{966}{12}
-\@LN{967}{12}
-\@LN{968}{12}
-\@LN{969}{12}
-\@LN{970}{12}
-\@LN{971}{12}
-\@writefile{toc}{\contentsline {paragraph}{KKT condition and water-filling.}{13}{section*.16}\protected@file@percent }
-\@LN{972}{12}
 \@LN{973}{12}
 \@LN{974}{12}
 \@LN{975}{12}
@@ -1161,13 +1151,11 @@
 \@LN{978}{12}
 \@LN{979}{12}
 \@LN{980}{12}
-\def\@LN@column{1}
 \@LN{981}{12}
 \@LN{982}{12}
 \@LN{983}{12}
 \@LN{984}{12}
 \@LN{985}{12}
-\@writefile{toc}{\contentsline {paragraph}{Fitting the curves.}{13}{section*.17}\protected@file@percent }
 \@LN{986}{12}
 \@LN{987}{12}
 \@LN{988}{12}
@@ -1182,60 +1170,66 @@
 \@LN{997}{12}
 \@LN{998}{12}
 \@LN{999}{12}
-\@writefile{toc}{\contentsline {paragraph}{Budgets and fitted curves.}{13}{section*.18}\protected@file@percent }
-\@LN{1000}{12}
-\@LN{1001}{12}
-\@LN{1002}{12}
-\@LN{1003}{12}
-\@LN{1004}{12}
-\@LN{1005}{12}
-\@LN{1006}{12}
-\@writefile{toc}{\contentsline {section}{\numberline {C}Implementation details}{13}{appendix.C}\protected@file@percent }
-\newlabel{app:impl}{{C}{13}{Implementation details}{appendix.C}{}}
-\@writefile{toc}{\contentsline {paragraph}{Preprocessing.}{13}{section*.21}\protected@file@percent }
-\@LN{1007}{12}
-\@LN{1008}{12}
-\@LN{1009}{12}
-\@LN{1010}{12}
-\@LN{1011}{12}
-\@LN{1012}{12}
-\@LN{1013}{12}
-\@LN{1014}{12}
-\@writefile{toc}{\contentsline {paragraph}{Lazy evaluation.}{13}{section*.22}\protected@file@percent }
-\@LN{1015}{12}
-\@LN{1016}{12}
-\@LN{1017}{12}
-\@LN{1018}{12}
-\@LN{1019}{12}
-\@LN{1020}{12}
-\@LN{1021}{12}
-\@LN{1022}{12}
-\@LN{1023}{12}
-\@LN{1024}{12}
-\@LN{1025}{12}
-\@LN{1026}{12}
-\@LN{1027}{12}
-\@LN{1028}{12}
-\@LN{1029}{12}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Budgets per script for three scripts at $K=32\mathrm  {k}$, with the fitted cost curves $t_c(k)=a_c k^{-b_c}+d_c$.}}{14}{table.caption.19}\protected@file@percent }
-\newlabel{tab:alloc3}{{10}{14}{Budgets per script for three scripts at $K=32\mathrm {k}$, with the fitted cost curves $t_c(k)=a_c k^{-b_c}+d_c$}{table.caption.19}{}}
+\def\@LN@column{1}
 \def\@LN@column{2}
+\@LN{1000}{13}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Per-language costs along the front}{14}{appendix.A}\protected@file@percent }
+\newlabel{app:perlang}{{A}{14}{Per-language costs along the front}{appendix.A}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Tokens per sentence of each language as $p$ grows (five-sample means of Table~\ref {tab:perlang}). The four costs converge; no Indian language rises above its cost at $p=1$.}}{14}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:perlang}{{2}{14}{Tokens per sentence of each language as $p$ grows (five-sample means of Table~\ref {tab:perlang}). The four costs converge; no Indian language rises above its cost at $p=1$}{figure.caption.13}{}}
+\@LN{1001}{13}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Per-language costs with 14 languages}{14}{appendix.B}\protected@file@percent }
+\newlabel{app:multi}{{B}{14}{Per-language costs with 14 languages}{appendix.B}{}}
+\@LN{1002}{13}
+\@LN{1003}{13}
+\@LN{1004}{13}
+\@LN{1005}{13}
+\@LN{1006}{13}
+\@LN{1007}{13}
+\@LN{1008}{13}
+\@LN{1009}{13}
+\@LN{1010}{13}
+\@LN{1011}{13}
+\@writefile{toc}{\contentsline {section}{\numberline {C}Vocabulary allocation by water-filling}{14}{appendix.C}\protected@file@percent }
+\newlabel{app:alloc}{{C}{14}{Vocabulary allocation by water-filling}{appendix.C}{}}
+\@writefile{toc}{\contentsline {paragraph}{Problem.}{14}{section*.15}\protected@file@percent }
+\@LN{1012}{13}
+\@LN{1013}{13}
+\@LN{1014}{13}
+\@LN{1015}{13}
+\@LN{1016}{13}
+\@LN{1017}{13}
+\@LN{1018}{13}
+\@LN{1019}{13}
+\newlabel{eq:alloc-app}{{7}{14}{Problem}{equation.7}{}}
+\@LN{1020}{13}
+\@LN{1021}{13}
+\@writefile{toc}{\contentsline {paragraph}{Convexity.}{14}{section*.16}\protected@file@percent }
+\@LN{1022}{13}
+\@LN{1023}{13}
+\@LN{1024}{13}
+\@LN{1025}{13}
+\@LN{1026}{13}
+\@LN{1027}{13}
+\@LN{1028}{13}
+\@LN{1029}{13}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{KKT condition and water-filling.}{14}{section*.17}\protected@file@percent }
 \@LN{1030}{13}
 \@LN{1031}{13}
 \@LN{1032}{13}
 \@LN{1033}{13}
 \@LN{1034}{13}
-\@writefile{toc}{\contentsline {paragraph}{Training time (planned).}{14}{section*.23}\protected@file@percent }
 \@LN{1035}{13}
 \@LN{1036}{13}
 \@LN{1037}{13}
 \@LN{1038}{13}
 \@LN{1039}{13}
 \@LN{1040}{13}
-\@writefile{toc}{\contentsline {paragraph}{Language-model experiment (planned).}{14}{section*.25}\protected@file@percent }
 \@LN{1041}{13}
 \@LN{1042}{13}
 \@LN{1043}{13}
+\@writefile{toc}{\contentsline {paragraph}{Fitting the curves.}{14}{section*.18}\protected@file@percent }
 \@LN{1044}{13}
 \@LN{1045}{13}
 \@LN{1046}{13}
@@ -1244,10 +1238,80 @@
 \@LN{1049}{13}
 \@LN{1050}{13}
 \@LN{1051}{13}
-\def\@LN@column{1}
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Budgets per script for ten scripts at $K=64\mathrm  {k}$ (14 languages at natural balance), with the fitted cost curves.}}{15}{table.caption.20}\protected@file@percent }
-\newlabel{tab:alloc10}{{11}{15}{Budgets per script for ten scripts at $K=64\mathrm {k}$ (14 languages at natural balance), with the fitted cost curves}{table.caption.20}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Training time with and without lazy evaluation.}}{15}{table.caption.24}\protected@file@percent }
-\newlabel{tab:speed}{{12}{15}{Training time with and without lazy evaluation}{table.caption.24}{}}
+\@LN{1052}{13}
+\@LN{1053}{13}
+\@LN{1054}{13}
+\@LN{1055}{13}
+\@LN{1056}{13}
+\@LN{1057}{13}
+\@writefile{toc}{\contentsline {paragraph}{Budgets and fitted curves.}{14}{section*.19}\protected@file@percent }
+\@LN{1058}{13}
+\@LN{1059}{13}
+\@LN{1060}{13}
+\@LN{1061}{13}
+\@LN{1062}{13}
+\@LN{1063}{13}
+\@LN{1064}{13}
+\@writefile{toc}{\contentsline {section}{\numberline {D}Implementation details}{14}{appendix.D}\protected@file@percent }
+\newlabel{app:impl}{{D}{14}{Implementation details}{appendix.D}{}}
+\@writefile{toc}{\contentsline {paragraph}{Preprocessing.}{14}{section*.22}\protected@file@percent }
+\@LN{1065}{13}
+\@LN{1066}{13}
+\@LN{1067}{13}
+\@LN{1068}{13}
+\@LN{1069}{13}
+\@LN{1070}{13}
+\@LN{1071}{13}
+\@LN{1072}{13}
+\@writefile{toc}{\contentsline {paragraph}{Lazy evaluation.}{14}{section*.23}\protected@file@percent }
+\@LN{1073}{13}
+\@LN{1074}{13}
+\@LN{1075}{13}
+\@LN{1076}{13}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Tokens per sentence on FLORES-200 devtest for 14 languages at natural data balance and a 64k vocabulary, mean over three samples of training text. ``Worst ratio'' is $\max _{\ell \neq  \mathrm  {eng}} t_\ell /t_\ell ^{\mathrm  {classical}}$.}}{15}{table.caption.14}\protected@file@percent }
+\newlabel{tab:multilang}{{10}{15}{Tokens per sentence on FLORES-200 devtest for 14 languages at natural data balance and a 64k vocabulary, mean over three samples of training text. ``Worst ratio'' is $\max _{\ell \neq \mathrm {eng}} t_\ell /t_\ell ^{\mathrm {classical}}$}{table.caption.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Budgets per script for three scripts at $K=32\mathrm  {k}$, with the fitted cost curves $t_c(k)=a_c k^{-b_c}+d_c$.}}{15}{table.caption.20}\protected@file@percent }
+\newlabel{tab:alloc3}{{11}{15}{Budgets per script for three scripts at $K=32\mathrm {k}$, with the fitted cost curves $t_c(k)=a_c k^{-b_c}+d_c$}{table.caption.20}{}}
 \def\@LN@column{2}
-\gdef \@abspage@last{15}
+\@LN{1077}{14}
+\@LN{1078}{14}
+\@LN{1079}{14}
+\@LN{1080}{14}
+\@LN{1081}{14}
+\@LN{1082}{14}
+\@LN{1083}{14}
+\@LN{1084}{14}
+\@LN{1085}{14}
+\@LN{1086}{14}
+\@LN{1087}{14}
+\@LN{1088}{14}
+\@LN{1089}{14}
+\@LN{1090}{14}
+\@LN{1091}{14}
+\@LN{1092}{14}
+\@writefile{toc}{\contentsline {paragraph}{Training time (planned).}{15}{section*.24}\protected@file@percent }
+\@LN{1093}{14}
+\@LN{1094}{14}
+\@LN{1095}{14}
+\@LN{1096}{14}
+\@LN{1097}{14}
+\@LN{1098}{14}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Language-model experiment (planned).}{15}{section*.26}\protected@file@percent }
+\@LN{1099}{14}
+\@LN{1100}{14}
+\@LN{1101}{14}
+\@LN{1102}{14}
+\@LN{1103}{14}
+\@LN{1104}{14}
+\@LN{1105}{14}
+\@LN{1106}{14}
+\@LN{1107}{14}
+\@LN{1108}{14}
+\@LN{1109}{14}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Budgets per script for ten scripts at $K=64\mathrm  {k}$ (14 languages at natural balance), with the fitted cost curves.}}{16}{table.caption.21}\protected@file@percent }
+\newlabel{tab:alloc10}{{12}{16}{Budgets per script for ten scripts at $K=64\mathrm {k}$ (14 languages at natural balance), with the fitted cost curves}{table.caption.21}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Training time with and without lazy evaluation.}}{16}{table.caption.25}\protected@file@percent }
+\newlabel{tab:speed}{{13}{16}{Training time with and without lazy evaluation}{table.caption.25}{}}
+\def\@LN@column{2}
+\gdef \@abspage@last{16}

@@ -110,3 +110,14 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   weaker lever than the merge rule; union-proportion is fairer than convex p=8 but 2.7% / 0.8% less compressed;
   convex p=8 raises Assamese (42.4 -> 45.5) because its cluster cost is dominated by Bengali (25x the text).
   Budgets and fits in Appendix B (tab:alloc3, tab:alloc10).
+- E3 error bars finished (results_l14_eb/, 3 samples x 16 tokenizers, ~1 h). Spread 0.0001-0.0007 in Gini.
+  Matched compression: Hybrid-50 +0.0030+-0.0003 (p-fair fairer 3/3), Hybrid-75 -0.0002+-0.0001 (0/3),
+  Hybrid-90 -0.0023+-0.0002 (0/3); WorstN-2/3/5 and Window-100 within 0.0002 of the curve (ties). Monotone front
+  3/3 at every step; bootstrap: each step lowers Gini in 100% of resamples except p=128 -> Parity-aware (71.5%).
+  The pilot picture holds with error bars: p-fair fairer at the fair end, hybrid fairer at the mild end, by amounts
+  ~10x the spread but ~4% of the front's span; no headline dominance.
+
+## 2026-10-23  E8 training-time table -> results_speed/
+- `nohup /private/tmp/claude-501/-Users-siddhant-Desktop-pfair-bpe/f8f0011d-0444-42b2-8e1a-8d058149434b/scratchpad/e8.sh > e8_speed.log 2>&1 &` PID 41521: `python3 speed_table.py --out results_speed` (4 languages, 32k)
+  then the same with the 14 languages / data_l14 / 64k; lazy and naive, p = 1, 8, inf. Machine otherwise idle.
+- Findings: (pending)
