@@ -97,3 +97,16 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   kept as results_alloc_premergefix/ and results_alloc_l14_premergefix/ (logs e6_alloc*_premergefix.log).
 - After the fix: `cargo build --release` ok; chain PID 39018 (log check_e6_chain.log): `python3 check.py`
   (check_after_mergefix.log) then both allocate.py runs again (results_alloc/, results_alloc_l14/).
+- check.py after the merge fix: 29/29 PASS (check_after_mergefix.log). E6 reruns: results_alloc/ byte-identical to the
+  pre-fix run (no U+2581 in those alphabets); results_alloc_l14/ now sensible (~20 min; e6_alloc_l14.log).
+- E6 findings (Gini / train bytes per token). 3 scripts @32k: joint p=1 0.0380/6.904, joint p=8 0.0233/6.862,
+  uniform 0.0263/6.787, data-prop 0.0507/6.875, union-prop 0.0187/6.668, convex p=1 0.0379/6.901, convex p=8
+  0.0264/6.855. 10 scripts @64k: joint p=1 0.0664/8.942, joint p=8 0.0373/8.848, uniform 0.0571/8.559, data-prop
+  0.0843/8.884, union-prop 0.0475/8.775, convex p=1 0.0649/8.929, convex p=8 0.0515/8.847. Curve-fit RMSE <= 0.03
+  (3 scripts) and <= 0.15 (10 scripts, Orya). Conclusions written in Section 6.5: the convex p=1 split is the
+  best-compressing split, within 0.05% / 0.14% of the joint tokenizer (the pilot's "splitting is costly" warning
+  does not hold: only the uniform split pays, 1.7% / 4.3%); convex p=8 lowers the Gini of the split (0.038->0.026,
+  0.065->0.052) at the joint p=8 compression but the joint p=8 rule is fairer (0.023, 0.037): allocation is a
+  weaker lever than the merge rule; union-proportion is fairer than convex p=8 but 2.7% / 0.8% less compressed;
+  convex p=8 raises Assamese (42.4 -> 45.5) because its cluster cost is dominated by Bengali (25x the text).
+  Budgets and fits in Appendix B (tab:alloc3, tab:alloc10).

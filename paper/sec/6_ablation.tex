@@ -144,34 +144,64 @@ text; boundary F1 is measured against the SuTRA gold segmentations.}
 \label{tab:morph}
 \end{table}
 
-\subsection{Vocabulary allocation across scripts (planned)}
+\subsection{Vocabulary allocation across scripts}
 \label{sec:alloc}
 
 A complementary question is how a fixed vocabulary of size $K$ should be divided between
-scripts (Devanagari, Gujarati and Latin). We fit a cost curve $t_c(k)=a_c k^{-b_c}+d_c$ per
-script $c$ and solve $\min_k \sum_c \pi_c\, t_c(k_c)^p$ subject to $\sum_c k_c=K$, which is
-convex for $p\ge1$ and is solved by water-filling (Appendix~\ref{app:alloc}). We compare it
-with a uniform split, a split proportional to the data share of each script, and the
-union-proportion rule of \citet{brahma2026}, and we report a joint tokenizer of the same
-size without any allocation as a reference (Table~\ref{tab:alloc}).
+scripts. We fitted a cost curve $t_c(k)=a_c k^{-b_c}+d_c$ per script $c$ from tokenizers
+trained on the script's languages alone at five budgets from 2k to 32k, and solved
+$\min_k \sum_c \pi_c\, t_c(k_c)^p$ subject to $\sum_c k_c=K$, which is convex for $p\ge1$
+and is solved by water-filling (Appendix~\ref{app:alloc}). The curves fit with a
+root-mean-square error of at most 0.03 tokens per sentence for the three scripts of the
+main setting and 0.15 for the ten scripts of the 14-language setting
+(Section~\ref{sec:multi}). The merged tokenizers were compared with a uniform split, a split
+proportional to the data share of each script, the union-proportion rule of
+\citet{brahma2026}, and a joint tokenizer of the same size without allocation
+(Table~\ref{tab:alloc}; the budgets are listed in Appendix~\ref{app:alloc}).
+
+The convex split does what the objective asks of it, and splitting by script costs little.
+At $p=1$, the convex split is the best-compressing split in both settings, within
+0.0\% of the joint tokenizer with three scripts (6.901 vs.\ 6.904 bytes per token)
+and within 0.1\% with ten (8.929 vs.\ 8.941), whereas the uniform split loses
+1.7\% and 4.3\%. At $p=8$, the convex split moves budget away from Latin, and with
+ten scripts also from Bengali, towards the scripts whose languages are expensive, and
+lowers the Gini coefficient of the split from 0.038 to 0.026 with three scripts and
+from 0.065 to 0.051 with ten, at the same compression as the joint $p=8$ tokenizer
+with ten scripts (8.847 vs.\ 8.848). However, allocation is a weaker lever than the
+merge rule, since the joint $p=8$ tokenizer reaches a Gini coefficient of 0.023 and
+0.037 at that compression. The union-proportion split is fairer than the convex $p=8$
+split (0.019 and 0.048) but pays 2.7\% and 0.8\% of compression for it, so
+the two occupy different points of the trade-off rather than one dominating the other,
+and the data-proportional split is the least fair in both settings (0.051 and
+0.084). Finally, allocation acts on clusters rather than on languages: with ten
+scripts, the convex $p=8$ split raises Assamese, the smallest language, from 42.4 to
+45.5 tokens per sentence, because the cost of its cluster is dominated by Bengali, which
+has 26 times as much text. A fair split between scripts therefore does not remove the
+need for a fair rule within them.
 
 \begin{table}[t]
 \centering
 \small
-\begin{tabular}{lcc}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
 \toprule
-Allocation & Gini $\downarrow$ & Compression $\uparrow$\\
+ & \multicolumn{2}{c}{3 scripts, 32k} & \multicolumn{2}{c}{10 scripts, 64k}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Allocation & Gini $\downarrow$ & Compr.\ $\uparrow$ & Gini $\downarrow$ & Compr.\ $\uparrow$\\
 \midrule
-Joint, $p=1$ (no allocation) & 0.0380 & 6.910\\
-Joint, $p=8$ (no allocation) & 0.0229 & 6.868\\
-Uniform split & -- & --\\
-Data-proportional split & -- & --\\
-Union proportion \citep{brahma2026} & -- & --\\
-Convex, $p=1$ & -- & --\\
-Convex, $p=8$ & -- & --\\
+Joint, $p=1$ (no allocation) & 0.0380 & 6.904 & 0.0664 & 8.941\\
+Joint, $p=8$ (no allocation) & 0.0233 & 6.862 & 0.0373 & 8.848\\
+\midrule
+Uniform split & 0.0263 & 6.787 & 0.0571 & 8.559\\
+Data-proportional split & 0.0507 & 6.875 & 0.0843 & 8.884\\
+Union proportion \citep{brahma2026} & 0.0187 & 6.668 & 0.0475 & 8.775\\
+Convex, $p=1$ & 0.0379 & 6.901 & 0.0649 & 8.929\\
+Convex, $p=8$ & 0.0264 & 6.855 & 0.0515 & 8.847\\
 \bottomrule
-\end{tabular}
-\caption{Vocabulary allocation across scripts at a total budget of 32k.}
+\end{tabular}}
+\caption{Vocabulary allocation across scripts: three scripts at a total budget of 32k
+(main setting) and ten scripts at 64k (14 languages at natural balance). Compression is
+bytes per token on the training text; single runs.}
 \label{tab:alloc}
 \end{table}
 
