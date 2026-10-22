@@ -1243,17 +1243,36 @@ fn merge_models(args: &Args) {
         }
     }
     let base = Model::new(byte_base, alphabet.clone(), Vec::new());
-    let mut ids: FxMap<Vec<u8>, u32> = FxMap::default();
-    for (i, t) in base.token_bytes().into_iter().enumerate() {
-        ids.insert(t, i as u32);
+    // Tokens are identified by their decomposition into merged base ids, not by
+    // their bytes: a text can contain the word-marker character itself (U+2581
+    // occurs in Bengali and Urdu web text), and keying by bytes would then confuse
+    // that alphabet character with the word marker and break every word-initial merge.
+    let mut ids: FxMap<Vec<u32>, u32> = FxMap::default();
+    for i in 0..base.n_base() {
+        ids.insert(vec![i], i);
     }
-    // (relative rank, model index, rank, token a, token b)
-    let mut all: Vec<(f64, usize, usize, Vec<u8>, Vec<u8>)> = Vec::new();
+    // (relative rank, model index, rank, decomposition of a, decomposition of b)
+    let mut all: Vec<(f64, usize, usize, Vec<u32>, Vec<u32>)> = Vec::new();
     for (i, m) in models.iter().enumerate() {
-        let tb = m.token_bytes();
+        let mut dec: Vec<Vec<u32>> = Vec::with_capacity(m.vocab_size());
+        dec.push(vec![UNK]);
+        dec.push(vec![MARK]);
+        if byte_base {
+            for b in 0..=255u8 {
+                dec.push(vec![2 + b as u32]);
+            }
+        } else {
+            for &c in &m.alphabet {
+                dec.push(vec![*base.cmap.get(&c).unwrap_or_else(|| die("internal error: alphabet mismatch in merge"))]);
+            }
+        }
         let n = m.merges.len().max(1) as f64;
         for (r, &(a, b)) in m.merges.iter().enumerate() {
-            all.push((r as f64 / n, i, r, tb[a as usize].clone(), tb[b as usize].clone()));
+            let (da, db) = (dec[a as usize].clone(), dec[b as usize].clone());
+            let mut t = da.clone();
+            t.extend_from_slice(&db);
+            all.push((r as f64 / n, i, r, da, db));
+            dec.push(t);
         }
     }
     all.sort_by(|x, y| x.0.partial_cmp(&y.0).unwrap().then(x.1.cmp(&y.1)).then(x.2.cmp(&y.2)));

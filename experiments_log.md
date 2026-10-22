@@ -67,3 +67,33 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   0.004; at 8x English the hybrid is fairer at 75/90% by 0.002-0.004. The Lee et al. effect (Parity-aware losing
   equity with size) does NOT appear; instead intermediate p loses equity with size, contrary to the hypothesis in
   Section 6.2 of the draft -- reported as such in the paper.
+
+## 2026-10-22  Phase 2 launched (after STOP 1)
+- E3: chain script (single run -> compare_hybrid.py -> 3-sample error bars), PID 36559, log e3_l14.log
+  `python3 run_all.py --langs hin,mar,guj,ben,pan,ori,asm,san,tam,tel,kan,mal,urd,eng --natural --total-chars-m 400 --vocab-size 64000 --ps 1,2,4,8,16,32,64,128,inf --hybrids 0.5,0.75,0.9 --worst-ns 2,3,5 --window 100 --data data_l14 --out results_l14`
+  then `python3 error_bars.py --samples 3 --ps 1,2,4,8,16,32,64,128,inf --hybrids 0.5,0.75,0.9 --run-args "--langs ... --natural --total-chars-m 400 --worst-ns 2,3,5 --window 100" --vocab-size 64000 --out results_l14_eb`
+- E6 (3 scripts): `python3 allocate.py --clusters "Deva=hin,mar;Gujr=guj;Latn=eng" --ps 1,8 --vocab-size 32000 --out results_alloc`  PID 36560, log e6_alloc.log
+- `pip install torch transformers` for E7 (PID 36561); E5 queued until the SuTRA gold files are provided.
+- torch 2.14.1 (MPS available) and transformers 5.20.2 installed.
+- E6 (3 scripts) finished in ~4 min (results_alloc/). Curve fits: RMSE 0.02-0.03 tokens/sentence (a=1214/1051/2333,
+  b=0.5/0.5/0.6, d=21.3/20.4/20.9 for Deva/Gujr/Latn). Budgets (Deva/Gujr/Latn): uniform 11290/11288/11288,
+  data-prop 9717/4706/19029, union-prop 16943/8471/8471, convex p=1 11201/6275/16091, convex p=8 13255/7937/12598.
+  Results (Gini / train compression): joint p=1 0.0380/6.904, joint p=8 0.0233/6.862, uniform 0.0263/6.787,
+  data-prop 0.0507/6.875, union-prop 0.0187/6.668, convex p=1 0.0379/6.901, convex p=8 0.0264/6.855.
+  Findings: convex p=1 is the best-compressing split and within 0.05% of the joint tokenizer (the pilot's
+  "splitting is costly" warning does not show at this scale: 6.901 vs 6.904); convex p=8 is NOT the fairest split
+  (union-proportion has Gini 0.019 but 3.4% worse compression); convex p=8 dominates the uniform split (same Gini,
+  1% better compression) and sits 0.003 in Gini / 0.1% compression behind joint p=8. Reported as such in Section 6.5.
+- E3 single run finished (16 tokenizers, ~15 min). compare_hybrid.py: Hybrid-50 p-fair fairer by 0.0032, Hybrid-75
+  hybrid by 0.0002, Hybrid-90 hybrid by 0.0022; WorstN-2/3/5 and Window-100 within 0.0003 of the curve at the parity
+  end -- same picture as the pilot. Error-bar run (results_l14_eb) continues in the same chain.
+- E6 (10 scripts): `python3 allocate.py --data data_l14 --vocab-size 64000 --ps 1,8 --out results_alloc_l14 --clusters "Deva=hin,mar,san;Gujr=guj;Beng=ben,asm;Guru=pan;Orya=ori;Taml=tam;Telu=tel;Knda=kan;Mlym=mal;Arab=urd;Latn=eng"`  PID 37484, log e6_alloc_l14.log
+- E6 (10 scripts) first run: BUG FOUND. Every merged tokenizer cost about twice the joint one (English 68 tokens per
+  sentence vs 32 for the Latin-only part). Cause: `pfair merge` identified tokens by their bytes, and the Bengali and
+  Urdu training text contains the word-marker character U+2581 itself, so the alphabet entry overwrote the marker and
+  every word-initial merge of every model was mis-mapped. Fix in src/main.rs (merge_models): tokens are now identified
+  by their decomposition into merged base ids. Verified on the Latn+Beng+Arab parts (English 31.98 after the fix).
+  The 3-script run was not affected (no U+2581 in those alphabets) but is rerun for consistency. The wrong folders are
+  kept as results_alloc_premergefix/ and results_alloc_l14_premergefix/ (logs e6_alloc*_premergefix.log).
+- After the fix: `cargo build --release` ok; chain PID 39018 (log check_e6_chain.log): `python3 check.py`
+  (check_after_mergefix.log) then both allocate.py runs again (results_alloc/, results_alloc_l14/).

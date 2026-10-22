@@ -200,6 +200,7 @@ compression), in line with the motivation for the hybrid in \citet{foroutan2026}
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcc}
 \toprule
 Baseline & Gini difference & Fairer (samples)\\
@@ -212,7 +213,7 @@ Worst-$N$, $N=2$ & $-0.0002\pm0.0003$ & Worst-$N$ (2/2)$^\ast$\\
 Worst-$N$, $N=3$ & $-0.0006\pm0.0001$ & Worst-$N$ (4/4)$^\ast$\\
 Moving window & $-0.0002\pm0.0003$ & window (4/4)$^\ast$\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Baselines against $p$-fair BPE at the same training-text compression.
 Difference in Gini (baseline minus $p$-fair), mean $\pm$ standard deviation over five
 samples. $^\ast$Defined only in the samples (2 and 4 of 5) where the baseline's compression
