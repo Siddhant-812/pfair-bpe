@@ -1,8 +1,86 @@
-% Appendix. Sections marked "(planned)" and cells marked "--" are filled from
-% the experiments in experiments.md (repository root).
+\section{Proofs}
+\label{app:proofs}
+
+\paragraph{Proposition~\ref{prop:rule}.}
+\begin{proof}
+Since $x\mapsto x^{1/p}$ is increasing, minimising $F_p$ is equivalent to minimising
+$\Phi_p=\sum_\ell \pi_\ell\, t_\ell^{\,p}$. A merge of $(a,b)$ changes each $t_\ell$ by
+$\Delta t_\ell = -c_\ell(a,b)/N_\ell$, so the first-order change in $\Phi_p$ is
+\begin{equation*}
+  \Delta\Phi_p \approx \sum_\ell p\,\pi_\ell\, t_\ell^{\,p-1}\Delta t_\ell
+  = -\frac{p}{\sum_k N_k}\sum_\ell t_\ell^{\,p-1} c_\ell(a,b),
+\end{equation*}
+where the factors $N_\ell$ cancel with $\pi_\ell$. The decrease is largest for the pair
+that maximises $s_p$.
+\end{proof}
+
+\paragraph{Proposition~\ref{prop:lazy}.}
+\begin{proof}
+Adding a merge to the vocabulary can only join symbols, so no text gains tokens and every
+$t_\ell$ is non-increasing. Since $p-1\ge0$, every weight $t_\ell^{\,p-1}$ is
+non-increasing as well. A merge of $(a,b)$ into a new symbol $z$ removes occurrences of
+pairs that overlap $(a,b)$ and creates new adjacencies only with $z$, so the count
+$c_\ell$ of any pair that existed before the merge can only fall. The score $s_p$ is a sum of
+products of non-negative, non-increasing terms, and is therefore non-increasing.
+\end{proof}
 
 \section{Per-language costs along the front}
 \label{app:perlang}
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Tokenizer & Hindi & Marathi & Gujarati & English & Max/min\\
+\midrule
+Classical ($p=1$) & 35.00 & 32.47 & 34.44 & 29.03 & 1.21\\
+$p=2$  & 34.68 & 32.31 & 34.09 & 29.23 & 1.19\\
+$p=4$  & 34.21 & 32.09 & 33.61 & 29.56 & 1.16\\
+$p=8$  & 33.63 & 31.90 & 33.11 & 30.10 & 1.12\\
+$p=16$ & 33.08 & 31.89 & 32.71 & 30.75 & 1.08\\
+$p=32$ & 32.68 & 31.98 & 32.47 & 31.40 & 1.04\\
+Parity-aware ($p=\infty$) & 32.06 & 32.45 & 32.29 & 32.49 & 1.01\\
+\midrule
+Hybrid, 90\% classical & 33.73 & 32.89 & 33.84 & 29.44 & 1.15\\
+Hybrid, 75\% classical & 32.86 & 33.26 & 33.08 & 30.23 & 1.10\\
+Hybrid, 50\% classical & 32.09 & 32.48 & 32.33 & 32.33 & 1.01\\
+\midrule
+Worst-$N$, $N=2$ & 32.06 & 32.44 & 32.29 & 32.51 & 1.01\\
+Worst-$N$, $N=3$ & 32.08 & 32.36 & 32.28 & 32.48 & 1.01\\
+Moving window & 32.08 & 32.44 & 32.28 & 32.49 & 1.01\\
+\bottomrule
+\end{tabular}}
+\caption{Tokens per sentence on FLORES-200 devtest, mean over five samples of training
+text (standard deviations are at most 0.1). ``Max/min'' is the most expensive language
+divided by the cheapest. Worst-$N$ follows \citet{kanjirangat2026} and the moving window
+\citet{foroutan2026}.}
+\label{tab:perlang}
+\end{table}
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+ & Gini of cost & \multicolumn{2}{c}{Compression (bytes/token)} & Merges led & Gini diff.\ at\\
+\cmidrule(lr){3-4}
+Tokenizer & (devtest) $\downarrow$ & training text $\uparrow$ & devtest $\uparrow$ & by English & matched compr.\\
+\midrule
+Worst-$N$, $N=2$ & $0.0029\pm0.0005$ & $6.632\pm0.006$ & $8.830\pm0.004$ & 23\% & $-0.0002\pm0.0003$ (0/2)$^\ast$\\
+Worst-$N$, $N=3$ & $0.0025\pm0.0003$ & $6.637\pm0.005$ & $8.835\pm0.004$ & 23\% & $-0.0006\pm0.0001$ (0/4)$^\ast$\\
+Moving window & $0.0027\pm0.0003$ & $6.635\pm0.006$ & $8.830\pm0.006$ & 23\% & $-0.0002\pm0.0003$ (0/4)$^\ast$\\
+\bottomrule
+\end{tabular}}
+\caption{Worst-$N$ parity \citep{kanjirangat2026} and the moving window \citep{foroutan2026} in the main setting
+(32k, English at $4\times$), mean $\pm$ standard deviation over five samples; the columns are those of Table~\ref{tab:front}.
+$^\ast$The matched-compression difference is defined only in the samples (2 and 4 of 5) where the
+baseline's compression lies within the range of the $p$-fair front.}
+\label{tab:worstn}
+\end{table}
+
 
 \begin{figure}[h]
 \centering
@@ -34,6 +112,56 @@ cost at $p=1$.}
 \label{fig:perlang}
 \end{figure}
 
+
+\section{Cost unit}
+\label{app:unit}
+
+Table~\ref{tab:byte} gives the per-language costs behind Section~\ref{sec:unitresult}.
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+Tokenizer & Hindi & Marathi & Gujarati & English\\
+\midrule
+Classical BPE & 35.0 & 32.5 & 34.4 & 29.0\\
+Parity-aware, cost per byte & 63.6 & 70.6 & 66.5 & 26.6\\
+Parity-aware, cost per character & 32.5 & 32.9 & 31.3 & 32.9\\
+Parity-aware, cost per sentence & 32.1 & 32.5 & 32.3 & 32.5\\
+\bottomrule
+\end{tabular}}
+\caption{Tokens per sentence on devtest when the training cost is measured per byte or per
+character (single runs) or per parallel sentence (five-sample mean, Table~\ref{tab:perlang}).}
+\label{tab:byte}
+\end{table}
+
+\section{Data balance and vocabulary size}
+\label{app:sens}
+
+Table~\ref{tab:sens} gives the Gini coefficients behind Section~\ref{sec:sens}.
+
+\begin{table*}[h]
+\centering
+\small
+\begin{tabular}{llccccccccc}
+\toprule
+English & Vocab. & $p=1$ & $p=2$ & $p=4$ & $p=8$ & $p=16$ & $p=32$ & $p=\infty$ & Cost of parity\\
+\midrule
+$1\times$ & 32k & 0.0186 & 0.0172 & 0.0148 & 0.0117 & 0.0077 & 0.0042 & 0.0034 & 1.1\%\\
+$4\times$ $\dagger$ & 32k & 0.0380 & 0.0347 & 0.0298 & 0.0229 & 0.0152 & 0.0084 & 0.0028 & 4.0\%\\
+$8\times$ & 32k & 0.0505 & 0.0461 & 0.0383 & 0.0298 & 0.0205 & 0.0114 & 0.0033 & 7.0\%\\
+$4\times$ & 64k & 0.0378 & 0.0353 & 0.0313 & 0.0255 & 0.0177 & 0.0102 & 0.0032 & 5.1\%\\
+$4\times$ $\ddagger$ & 128k & 0.0376 & 0.0360 & 0.0327 & 0.0284 & 0.0218 & 0.0141 & 0.0031 & 7.5\%\\
+$4\times$ & 256k & 0.0383 & 0.0369 & 0.0352 & 0.0316 & 0.0269 & 0.0196 & 0.0026 & 10.7\%\\
+\bottomrule
+\end{tabular}
+\caption{Gini coefficient of per-language cost in other settings, and the compression lost
+by going from classical to Parity-aware BPE. The row marked $\dagger$ is the five-sample mean of Table~\ref{tab:front} and the row marked
+$\ddagger$ a five-sample mean as well; the others are single runs.}
+\label{tab:sens}
+\end{table*}
 
 \section{Per-language costs with 14 languages}
 \label{app:multi}
@@ -177,8 +305,49 @@ RMSE & 0.05 & 0.02 & 0.08 & 0.04 & 0.15 & 0.02 & 0.06 & 0.05 & 0.05 & 0.11 & 0.0
 \label{tab:alloc10}
 \end{table*}
 
+\section{Morphology penalty: formulation}
+\label{app:morph}
+
+The formulation admits a third axis, morphological alignment, inside the same greedy rule:
+a penalty is subtracted for merges that join symbols from different morphemes,
+\begin{equation}
+  (a,b)^\star = \argmax_{(a,b)}\; s_p(a,b) - \lambda\,\beta(a,b),
+  \label{eq:morph}
+\end{equation}
+where $\beta(a,b)=\sum_\ell t_\ell^{\,p-1}\beta_\ell(a,b)$ and $\beta_\ell(a,b)$ counts the
+occurrences of the pair in language $\ell$ whose junction is a morpheme boundary according
+to the SuTRA segmentations \citep{rathore2026}; an occurrence that crosses a boundary thus
+contributes $(1-\lambda)$ of its weight instead of 1. For $0\le\lambda\le1$ every term of
+the score stays non-negative and non-increasing, so Proposition~\ref{prop:lazy} and the
+lazy trainer remain exact; $\lambda=1$ ignores crossing occurrences entirely. Boundaries are
+known only for words in the segmentation lexicon. The trainer implements this penalty and its lazy evaluation, and the check suite verifies that
+the lazy trainer and brute-force rescoring select the same merges for $\lambda\in\{0.5,1\}$ at
+$p\in\{1,4,\infty\}$; the evaluation against gold segmentations is left for future work.
+
 \section{Implementation details}
 \label{app:impl}
+
+\begin{algorithm}[h]
+\caption{$p$-fair BPE training with lazy evaluation.}
+\label{alg:pfair}
+\small
+\begin{algorithmic}[1]
+\Require training texts $\{\mathcal{D}_\ell\}$, development set, exponent $p$, budget $K$
+\State $V \gets$ base alphabet; compute $c_\ell(a,b)$ and $t_\ell$ for all $\ell$
+\State $H \gets$ max-heap of all pairs keyed by $s_p(a,b)$
+\While{$|V| < K$}
+  \State pop $(a,b)$ with stored score $\hat s$ from $H$
+  \State $s \gets \sum_\ell t_\ell^{\,p-1} c_\ell(a,b)$ \Comment{current score}
+  \If{$s < \hat s$}
+    \State push $(a,b)$ with score $s$; \textbf{continue}
+  \EndIf
+  \State add merge $(a,b)\to z$ to $V$; update $c_\ell$ for touched pairs
+  \State push pairs containing $z$ with their exact scores
+  \State apply the merge to the development set; update every $t_\ell$
+\EndWhile
+\State \Return $V$
+\end{algorithmic}
+\end{algorithm}
 
 \paragraph{Preprocessing.}
 Training lines are NFC-normalised; lines shorter than 20 characters and exact duplicates

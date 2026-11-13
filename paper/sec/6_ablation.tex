@@ -1,183 +1,82 @@
 \section{Ablations and Analysis}
 \label{sec:ablation}
 
-% Rows and cells marked "--" are planned experiments without results yet.
-% Replace them, and rewrite the matching "Planned" paragraphs, once runs finish.
-
 \subsection{The cost unit decides the outcome}
 \label{sec:unitresult}
 
 To test the choice of cost unit (Section~\ref{sec:problem}), we trained the parity rule
 with the cost measured per byte and per character instead of per parallel sentence
-(Table~\ref{tab:byte}). Per byte, English becomes the worst-off language, and the parity
-rule gives it 99\% of the merges. Measured by what a user pays, the result is the opposite
-of the intention: the Indian languages need about twice as many tokens per sentence as
-under classical BPE (63.6 vs.\ 35.0 for Hindi), while English needs fewer (26.6 vs.\ 29.0).
-The inversion is not confined to the parity end, since at $p=8$ the per-byte cost still
-sends 89\% of the merges to English and raises Hindi to 45.4 tokens per sentence. Per
-character, the inversion disappears because every script spends one code point per
-character, but the rule then equalises tokens per character rather than per sentence, and
-sentence length in characters differs by language (a Gujarati devtest sentence has 4\%
-fewer characters than its Hindi translation). The per-character parity tokenizer therefore
-leaves a Gini coefficient of 0.010 per sentence, against 0.003 for the per-sentence rule,
-and makes English the most expensive language (32.9 vs.\ 31.3 tokens for Gujarati). Thus, a
-per-byte cost inverts the parity rule across scripts, a per-character cost only
-approximates shared content, and the cost should be measured on parallel text.
+(Table~\ref{tab:byte}, Appendix~\ref{app:unit}). Per byte, English becomes the worst-off language, the parity rule
+gives it 99\% of the merges (89\% at $p=8$), and the Indian languages need about twice as
+many tokens per sentence as under classical BPE (63.6 vs.\ 35.0 for Hindi) while English
+needs fewer (26.6 vs.\ 29.0). Per character the inversion disappears, but the rule then
+equalises tokens per character rather than per sentence, and since a Gujarati devtest
+sentence has 4\% fewer characters than its Hindi translation, the per-character parity
+tokenizer leaves a Gini coefficient of 0.010 per sentence, against 0.003 for the
+per-sentence rule, with English the most expensive language (32.9 vs.\ 31.3 tokens for
+Gujarati). Thus, a per-byte cost inverts the parity rule across scripts, a per-character
+cost only approximates shared content, and the cost should be measured on parallel text.
 
-\begin{table}[t]
-\centering
-\small
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}
-\toprule
-Tokenizer & Hindi & Marathi & Gujarati & English\\
-\midrule
-Classical BPE & 35.0 & 32.5 & 34.4 & 29.0\\
-Parity-aware, cost per byte & 63.6 & 70.6 & 66.5 & 26.6\\
-Parity-aware, cost per character & 32.5 & 32.9 & 31.3 & 32.9\\
-Parity-aware, cost per sentence & 32.1 & 32.5 & 32.3 & 32.5\\
-\bottomrule
-\end{tabular}}
-\caption{Tokens per sentence on devtest when the training cost is measured per byte or per
-character (single runs) or per parallel sentence (five-sample mean, Table~\ref{tab:perlang}).}
-\label{tab:byte}
-\end{table}
 
 \subsection{Data balance and vocabulary size}
 \label{sec:sens}
 
-To measure how much the disparity depends on the setting, we repeated the experiment with
-other amounts of English and with larger vocabularies (Table~\ref{tab:sens}). These are
-single runs, whereas the five-sample spread of the main setting is at most 0.0005 in Gini.
-The direction is the same in every setting: the Gini coefficient and the compression fall
-at every step in $p$. However, the size of the problem changes considerably with data
-balance. With equal amounts of text, classical BPE is already close to parity (Gini
-0.019), and full parity costs 1.1\% of compression. With eight times as much English,
-the Gini coefficient is 0.051, a Hindi sentence costs 30\% more tokens than its English
-translation, and full parity costs 7.0\%. Moreover, with equal data the remaining
-disparity is not between English and the Indian languages, since English (31.7 tokens)
-lies between Marathi (30.4) and Hindi (33.3).
+We repeated the experiment with other amounts of English and with larger vocabularies
+(Table~\ref{tab:sens}, Appendix~\ref{app:sens}; single runs, whereas the five-sample spread
+of the main setting is at most 0.0005 in Gini). The direction is the same in every setting:
+Gini and compression fall at every step in $p$. The size of the problem, however, changes
+considerably with data balance. With equal amounts of text, classical BPE is already close
+to parity (Gini 0.019) and full parity costs 1.1\% of compression; with eight times as much
+English, the Gini coefficient is 0.051, a Hindi sentence costs 30\% more tokens than its
+English translation, and full parity costs 7.0\%. With equal data, English (31.7 tokens) lies between Marathi (30.4) and Hindi (33.3).
 
 Vocabulary size changes the picture in a way we did not expect. Between 32k and 256k, the
-Gini coefficient of classical BPE (0.038 at every size) and of Parity-aware BPE
-(0.003 to 0.004) do not move, so the loss of equity that \citet{lee2026} report for
-Parity-aware BPE at larger vocabularies does not appear here, possibly because the share of
-English is held constant and the number of languages is small. In contrast, the Gini
-coefficient at intermediate $p$ rises with the vocabulary, from 0.023 to 0.032 at
-$p=8$ and from 0.008 to 0.020 at $p=32$, and the cost of full parity grows from
-4.0\% to 10.7\%. We had expected the opposite, since every language keeps a positive
-weight in Eq.~\eqref{eq:rule} while the parity rule bounds only the worst-off language. The
-share of merges led by English at $p=8$ is 39\% at every size, so the dominant language
-does not acquire more merges; rather, the spread among the Indian languages grows, with
-Hindi at 27.9 tokens per sentence against 24.1 for Marathi at 256k and $p=8$, and
-$p=32$ raises Marathi above its classical cost at 64k and above (by 0.6\% at 64k and
-4.8\% at 256k). Thus, the exponent needed for a given level of parity grows with the
-vocabulary. The comparison with the hybrid moves the other way: at 64k, 128k and 256k,
-$p$-fair BPE is fairer than all three hybrid points at matched compression, by
-0.0003 to 0.0075 in Gini in single runs, whereas at 32k the differences have both signs
-(Section~\ref{sec:hybrid}).
+Gini coefficient of classical BPE (0.038 at every size) and of Parity-aware BPE (0.003 to
+0.004) do not move, so the loss of equity that \citet{lee2026} report for Parity-aware BPE
+at larger vocabularies does not appear here, possibly because the share of English is held
+constant. In contrast, the Gini coefficient at intermediate $p$ rises with the vocabulary,
+from 0.023 to 0.032 at $p=8$ and from 0.008 to 0.020 at $p=32$, and the cost of full parity
+grows from 4.0\% to 10.7\%, although every language keeps a positive weight in
+Eq.~\eqref{eq:rule}. English leads 39\% of the merges at $p=8$ at every size, so the dominant language does not
+acquire more merges; rather, the spread among the Indian languages grows (Hindi 27.9 vs.\
+Marathi 24.1 tokens per sentence at 256k and $p=8$), and $p=32$ raises Marathi above its
+classical cost from 64k on (by up to 4.8\% at 256k). The exponent needed for a given level
+of parity thus grows with the vocabulary. The comparison with the hybrid moves the other way. At 128k, in five samples of training
+text, $p$-fair BPE is fairer than all three hybrid points at matched compression, by
+$0.0023\pm0.0003$ (50\% classical merges), $0.0059\pm0.0002$ (75\%) and $0.0022\pm0.0001$
+(90\%) in Gini, in five of five samples each, whereas at 32k the differences are about 0.001
+with both signs (Section~\ref{sec:hybrid}); single runs at 64k and 256k show the same sign
+(0.0003 to 0.0075). Thus, the schedules separate where the vocabulary is large.
 
-\begin{table*}[t]
-\centering
-\small
-\begin{tabular}{llccccccccc}
-\toprule
-English & Vocab. & $p=1$ & $p=2$ & $p=4$ & $p=8$ & $p=16$ & $p=32$ & $p=\infty$ & Cost of parity\\
-\midrule
-$1\times$ & 32k & 0.0186 & 0.0172 & 0.0148 & 0.0117 & 0.0077 & 0.0042 & 0.0034 & 1.1\%\\
-$4\times$ $\dagger$ & 32k & 0.0380 & 0.0347 & 0.0298 & 0.0229 & 0.0152 & 0.0084 & 0.0028 & 4.0\%\\
-$8\times$ & 32k & 0.0505 & 0.0461 & 0.0383 & 0.0298 & 0.0205 & 0.0114 & 0.0033 & 7.0\%\\
-$4\times$ & 64k & 0.0378 & 0.0353 & 0.0313 & 0.0255 & 0.0177 & 0.0102 & 0.0032 & 5.1\%\\
-$4\times$ & 128k & 0.0378 & 0.0361 & 0.0329 & 0.0287 & 0.0219 & 0.0140 & 0.0035 & 7.6\%\\
-$4\times$ & 256k & 0.0383 & 0.0369 & 0.0352 & 0.0316 & 0.0269 & 0.0196 & 0.0026 & 10.7\%\\
-\bottomrule
-\end{tabular}
-\caption{Gini coefficient of per-language cost in other settings, and the compression lost
-by going from classical to Parity-aware BPE. The row marked $\dagger$ is the five-sample
-mean of Table~\ref{tab:front}; the others are single runs.}
-\label{tab:sens}
-\end{table*}
-
-\subsection{Morphology penalty (planned)}
-\label{sec:morph}
-
-To add morphological alignment as a third axis, we subtract a penalty for merges that join
-symbols from different morphemes:
-\begin{equation}
-  (a,b)^\star = \argmax_{(a,b)}\; s_p(a,b) - \lambda\,\beta(a,b),
-  \label{eq:morph}
-\end{equation}
-where $\beta(a,b)=\sum_\ell t_\ell^{\,p-1}\beta_\ell(a,b)$ and $\beta_\ell(a,b)$ counts the
-occurrences of the pair in language $\ell$ whose junction is a morpheme boundary according
-to the SuTRA segmentations \citep{rathore2026}; an occurrence that crosses a boundary thus
-contributes $(1-\lambda)$ of its weight instead of 1. For $0\le\lambda\le1$ every term of
-the score stays non-negative and non-increasing, so Proposition~\ref{prop:lazy} and the
-lazy trainer remain exact; $\lambda=1$ ignores crossing occurrences entirely. Boundaries are
-known only for words in the segmentation lexicon, and the lexicon is disjoint from the
-held-out words on which boundary F1 is measured. Table~\ref{tab:morph} reports boundary F1
-against the held-out SuTRA gold segmentations. Increasing $\lambda$ changes boundary F1 by
---, at a cost of -- in Gini and -- in compression.
-
-\begin{table}[t]
-\centering
-\small
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{llccccc}
-\toprule
- & & & & \multicolumn{3}{c}{Boundary F1 $\uparrow$}\\
-\cmidrule(lr){5-7}
-$p$ & $\lambda$ & Gini $\downarrow$ & Compr. $\uparrow$ & hi & mr & gu\\
-\midrule
-1 & 0 & 0.0380 & 6.910 & -- & -- & --\\
-1 & 0.5 & -- & -- & -- & -- & --\\
-1 & 1 & -- & -- & -- & -- & --\\
-8 & 0 & 0.0229 & 6.868 & -- & -- & --\\
-8 & 0.5 & -- & -- & -- & -- & --\\
-8 & 1 & -- & -- & -- & -- & --\\
-$\infty$ & 0 & 0.0028 & 6.634 & -- & -- & --\\
-$\infty$ & 0.5 & -- & -- & -- & -- & --\\
-$\infty$ & 1 & -- & -- & -- & -- & --\\
-\bottomrule
-\end{tabular}}
-\caption{Effect of the morphology penalty. Compression is bytes per token on the training
-text; boundary F1 is measured against the SuTRA gold segmentations.}
-\label{tab:morph}
-\end{table}
 
 \subsection{Vocabulary allocation across scripts}
 \label{sec:alloc}
 
 A complementary question is how a fixed vocabulary of size $K$ should be divided between
 scripts. We fitted a cost curve $t_c(k)=a_c k^{-b_c}+d_c$ per script $c$ from tokenizers
-trained on the script's languages alone at five budgets from 2k to 32k, and solved
+trained on the script's languages alone at five budgets from 2k to 32k (root-mean-square
+error at most 0.03 tokens per sentence for three scripts and 0.15 for ten), and solved
 $\min_k \sum_c \pi_c\, t_c(k_c)^p$ subject to $\sum_c k_c=K$, which is convex for $p\ge1$
-and is solved by water-filling (Appendix~\ref{app:alloc}). The curves fit with a
-root-mean-square error of at most 0.03 tokens per sentence for the three scripts of the
-main setting and 0.15 for the ten scripts of the 14-language setting
-(Section~\ref{sec:multi}). The merged tokenizers were compared with a uniform split, a split
-proportional to the data share of each script, the union-proportion rule of
-\citet{brahma2026}, and a joint tokenizer of the same size without allocation
-(Table~\ref{tab:alloc}; the budgets are listed in Appendix~\ref{app:alloc}).
+and is solved by water-filling (Appendix~\ref{app:alloc}). The merged tokenizers were
+compared with a uniform split, a split proportional to the data share of each script, the
+union-proportion rule of \citet{brahma2026}, and a joint tokenizer of the same size without
+allocation (Table~\ref{tab:alloc}; budgets in Appendix~\ref{app:alloc}).
 
 The convex split does what the objective asks of it, and splitting by script costs little.
-At $p=1$, the convex split is the best-compressing split in both settings, within
-0.0\% of the joint tokenizer with three scripts (6.901 vs.\ 6.904 bytes per token)
-and within 0.1\% with ten (8.929 vs.\ 8.941), whereas the uniform split loses
-1.7\% and 4.3\%. At $p=8$, the convex split moves budget away from Latin, and with
-ten scripts also from Bengali, towards the scripts whose languages are expensive, and
-lowers the Gini coefficient of the split from 0.038 to 0.026 with three scripts and
-from 0.065 to 0.051 with ten, at the same compression as the joint $p=8$ tokenizer
-with ten scripts (8.847 vs.\ 8.848). However, allocation is a weaker lever than the
-merge rule, since the joint $p=8$ tokenizer reaches a Gini coefficient of 0.023 and
-0.037 at that compression. The union-proportion split is fairer than the convex $p=8$
-split (0.019 and 0.048) but pays 2.7\% and 0.8\% of compression for it, so
-the two occupy different points of the trade-off rather than one dominating the other,
-and the data-proportional split is the least fair in both settings (0.051 and
-0.084). Finally, allocation acts on clusters rather than on languages: with ten
-scripts, the convex $p=8$ split raises Assamese, the smallest language, from 42.4 to
-45.5 tokens per sentence, because the cost of its cluster is dominated by Bengali, which
-has 26 times as much text. A fair split between scripts therefore does not remove the
-need for a fair rule within them.
+At $p=1$ it is the best-compressing split in both settings, within 0.05\% of the joint
+tokenizer with three scripts (6.901 vs.\ 6.904 bytes per token) and 0.14\% with ten (8.929
+vs.\ 8.942), whereas the uniform split loses 1.7\% and 4.3\%. At $p=8$ it moves budget away
+from Latin, and with ten scripts also from Bengali, towards the scripts whose languages are
+expensive, and lowers the Gini coefficient of the split from 0.038 to 0.026 with three
+scripts and from 0.065 to 0.052 with ten, at the compression of the joint $p=8$ tokenizer
+(8.847 vs.\ 8.848 with ten scripts). Allocation is nevertheless a weaker lever than the
+merge rule, since the joint $p=8$ tokenizer reaches 0.023 and 0.037 at that compression.
+The union-proportion split is fairer (0.019 and 0.048) but pays 2.7\% and 0.8\% of
+compression for it, and the data-proportional split is the least fair in both settings
+(0.051 and 0.084). Finally, allocation acts on clusters rather than languages: with ten scripts, the
+convex $p=8$ split raises Assamese, the smallest language, from 42.4 to 45.5 tokens per
+sentence, because its cluster's cost is dominated by Bengali, which has 26 times as much
+text. A fair split between scripts does not remove the need for a fair rule within them.
 
 \begin{table}[t]
 \centering
@@ -208,80 +107,73 @@ bytes per token on the training text; single runs.}
 \subsection{Scaling to 14 languages and natural data balance}
 \label{sec:multi}
 
-With four languages and one dominant language, the front is one-dimensional and a single
-switch point suffices to trace it, which may explain why the hybrid schedule matches
-$p$-fair BPE. To test the rule where several languages are under-served at different
-levels, we trained on 14 languages in 10 scripts (Hindi, Marathi, Gujarati, Bengali,
-Punjabi, Odia, Assamese, Sanskrit, Tamil, Telugu, Kannada, Malayalam, Urdu and English)
-with the amount of text of each language proportional to the size of its Sangraha split,
-so that Hindi (75M characters) has 33 times the text of Assamese (2.2M),
-at a 64k vocabulary, with $p$ up to 128, on three samples of training text
+With one dominant language the front is one-dimensional and a single switch point suffices
+to trace it, which may explain why the hybrid schedule matches $p$-fair BPE. To test the
+rule where several languages are under-served at different levels, we trained on 14
+languages in 10 scripts (Hindi, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese,
+Sanskrit, Tamil, Telugu, Kannada, Malayalam, Urdu and English) with text in proportion to
+the size of each Sangraha split, so that Hindi (75M characters) has 33 times the text of
+Assamese (2.2M), at a 64k vocabulary with $p$ up to 128, on three samples of training text
 (Table~\ref{tab:multi}; per-language costs in Appendix~\ref{app:multi}).
 
-The disparity is larger than with four languages, and it is no longer an English problem.
-Under classical BPE, the Gini coefficient is 0.067$\pm$0.001, a Punjabi sentence costs
-43.6 tokens against 30.4 for Bengali, and English, with 15\% of the text, is
-the second-cheapest language and leads only 14\% of the merges. Raising $p$ again
-traces a monotone front in three of three samples, from 0.067 to 0.004 in Gini and from
-8.94 to 8.34 bytes per token. At $p=8$ the Gini coefficient falls by 44\% for
-1.0\% of compression, and at $p=16$ by 62\% for 2.1\%; compression on the
-balanced test set peaks at $p=16$ (9.13 vs.\ 8.92 bytes per token).
+The disparity is larger than with four languages and no longer an English problem: under
+classical BPE the Gini coefficient is 0.067$\pm$0.001, a Punjabi sentence costs 43.6 tokens
+against 30.4 for Bengali, and English, with 15\% of the text, is the second-cheapest
+language and leads only 14\% of the merges. Raising $p$ again traces a monotone front in
+three of three samples, from 0.067 to 0.004 in Gini and from 8.94 to 8.34 bytes per token;
+at $p=8$ the Gini coefficient falls by 44\% for 1.0\% of compression, at $p=16$ by 62\% for
+2.1\%, and compression on the balanced test set peaks at $p=16$ (9.13 vs.\ 8.92).
 
 At matched compression, the outcome depends on where on the front the comparison is made.
 At the fair end, $p$-fair BPE is fairer than the hybrid with 50\% classical merges by
 $+0.0030\pm0.0003$ in Gini (3 of 3 samples); at 75\% the two tie ($-0.0002\pm0.0001$); at 90\% the
 hybrid is fairer by $-0.0023\pm0.0002$ (3 of 3). Worst-$N$ with $N\in\{2,3,5\}$ and the moving
-window again land at the parity end, within 0.0002 of the front. These differences are ten
-times the sample-to-sample spread (at most 0.0007) but about 5\% of the span of
-the front, so the schedules still trace the same curve as $p$-fair BPE. The front is thus
-determined by the data rather than by the rule, and neither interpolation dominates.
+window again land at the parity end, within 0.0002 of the front. These differences are ten times the sample-to-sample spread (at most 0.0007) but about 5\%
+of the span of the front, so the schedules still trace the same curve as $p$-fair BPE: the
+front is determined by the data rather than by the rule, and neither interpolation dominates.
 
 The rules differ in who pays. Every rule that moves towards parity, $p$-fair BPE included,
-raises the cheapest languages: Bengali goes from 30.4 to 32.7 tokens per sentence at
-$p=8$ and to 37.3 at $p=\infty$, and Hindi from 33.0 to 33.8 and 36.9
-(Appendix~\ref{app:multi}). The four-language observation that no Indian language becomes
-more expensive therefore does not generalise. What does hold is a statement about the
-under-served languages, those that cost more than the classical mean (Punjabi, Odia,
-Assamese, Sanskrit, Kannada, Malayalam and Urdu, plus Gujarati in two of the three
-samples): $p$-fair BPE never raises any of them, at any $p$, with a largest cost ratio
-against classical BPE between 0.968 and 0.995, whereas the hybrid raises one to three of
-them in every sample (Malayalam in all three, Gujarati in two, Kannada in one), by up to 1.2\% at 75\% and 2.3\%
-at 90\% classical merges (last column of Table~\ref{tab:multi}). The parity rule, Worst-$N$
-and the window also leave the under-served languages at or below their classical cost, but
-only at the parity end of the front.
+raises the cheapest languages: Bengali goes from 30.4 to 32.7 tokens per sentence at $p=8$
+and to 37.3 at $p=\infty$, and Hindi from 33.0 to 33.8 and 36.9 (Appendix~\ref{app:multi}),
+so the four-language observation that no Indian language becomes more expensive does not
+generalise. What does hold concerns the under-served languages, those above the classical
+mean cost (Punjabi, Odia, Assamese, Sanskrit, Kannada, Malayalam and Urdu, plus Gujarati in
+two of three samples): $p$-fair BPE never raises any of them at any $p$ (largest cost ratio
+against classical BPE 0.968 to 0.995), whereas the hybrid raises one to three of them in
+every sample (Malayalam in all three, Gujarati in two, Kannada in one), by up to 1.2\% at
+75\% and 2.3\% at 90\% classical merges (last column of Table~\ref{tab:multi}). The parity
+rule, Worst-$N$ and the window also spare the under-served languages, but only at the parity
+end of the front.
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
 \toprule
-Tokenizer & Gini $\downarrow$ & Max/min $\downarrow$ & Compression $\uparrow$ & Gini diff.\ at matched compr. & Under-served, max ratio\\
+Tokenizer & Gini $\downarrow$ & Compr.\ $\uparrow$ & Gini diff.\ matched & Under-served\\
 \midrule
-Classical ($p=1$) & $0.0665\pm0.0007$ & 1.43 & $8.941\pm0.014$ & -- & 1.000\\
-$p=4$ & $0.0488\pm0.0002$ & 1.29 & $8.910\pm0.013$ & -- & 0.983\\
-$p=8$ & $0.0370\pm0.0004$ & 1.21 & $8.847\pm0.012$ & -- & 0.973\\
-$p=16$ & $0.0250\pm0.0002$ & 1.14 & $8.749\pm0.011$ & -- & 0.968\\
-$p=32$ & $0.0151\pm0.0002$ & 1.08 & $8.640\pm0.009$ & -- & 0.971\\
-$p=128$ & $0.0046\pm0.0001$ & 1.03 & $8.472\pm0.007$ & -- & 0.980\\
-Parity-aware ($p=\infty$) & $0.0043\pm0.0001$ & 1.03 & $8.338\pm0.008$ & -- & 0.991\\
+Classical ($p=1$) & $0.0665\pm0.0007$ & $8.941\pm0.014$ & -- & 1.000\\
+$p=8$ & $0.0370\pm0.0004$ & $8.847\pm0.012$ & -- & 0.973\\
+$p=16$ & $0.0250\pm0.0002$ & $8.749\pm0.011$ & -- & 0.968\\
+$p=128$ & $0.0046\pm0.0001$ & $8.472\pm0.007$ & -- & 0.980\\
+Parity-aware ($p=\infty$) & $0.0043\pm0.0001$ & $8.338\pm0.008$ & -- & 0.991\\
 \midrule
-Hybrid, 50\% classical & $0.0106\pm0.0002$ & 1.08 & $8.528\pm0.006$ & $+0.0030\pm0.0003$ & 0.993\\
-Hybrid, 75\% classical & $0.0294\pm0.0002$ & 1.19 & $8.786\pm0.010$ & $-0.0002\pm0.0001$ & 1.012\\
-Hybrid, 90\% classical & $0.0439\pm0.0002$ & 1.28 & $8.896\pm0.012$ & $-0.0023\pm0.0002$ & 1.023\\
-Worst-$N$, $N=3$ & $0.0044\pm0.0003$ & 1.03 & $8.341\pm0.005$ & $-0.0000\pm0.0001$ & 0.992\\
-Worst-$N$, $N=5$ & $0.0042\pm0.0002$ & 1.02 & $8.349\pm0.011$ & $-0.0001\pm0.0002$ & 0.989\\
-Moving window & $0.0042\pm0.0001$ & 1.03 & $8.401\pm0.007$ & $-0.0002\pm0.0001$ & 0.980\\
+Hybrid, 50\% classical & $0.0106\pm0.0002$ & $8.528\pm0.006$ & $+0.0030\pm0.0003$ & 0.993\\
+Hybrid, 75\% classical & $0.0294\pm0.0002$ & $8.786\pm0.010$ & $-0.0002\pm0.0001$ & 1.012\\
+Hybrid, 90\% classical & $0.0439\pm0.0002$ & $8.896\pm0.012$ & $-0.0023\pm0.0002$ & 1.023\\
+Worst-$N$, $N=3$ & $0.0044\pm0.0003$ & $8.341\pm0.005$ & $-0.0000\pm0.0001$ & 0.992\\
+Moving window & $0.0042\pm0.0001$ & $8.401\pm0.007$ & $-0.0002\pm0.0001$ & 0.980\\
 \bottomrule
 \end{tabular}}
 \caption{Fourteen languages at natural data balance, 64k vocabulary, mean $\pm$ standard
-deviation over three samples of training text. Compression is bytes per token on the
-training text. ``Gini diff.'' is the baseline's Gini minus that of the $p$-fair front at the
-same compression (positive: $p$-fair fairer). ``Under-served, max ratio'' is
-$\max_\ell t_\ell/t_\ell^{\mathrm{classical}}$ over the languages that cost more than the
-classical mean; a value above 1 means the rule made an under-served language more expensive.}
+deviation over three samples. Compression is bytes per token on the training text. ``Gini
+diff.'' is the baseline's Gini minus that of the $p$-fair front at the same compression
+(positive: $p$-fair fairer). ``Under-served'' is $\max_\ell t_\ell/t_\ell^{\mathrm{classical}}$
+over the languages that cost more than the classical mean; above 1, the rule made an
+under-served language more expensive. Max/min ratios are in Appendix~\ref{app:multi}.}
 \label{tab:multi}
-\end{table*}
+\end{table}
 
 \subsection{Language-model evaluation (planned)}
 \label{sec:downstream}
@@ -290,26 +182,8 @@ Token cost is what a user pays, but a fairer tokenizer could in principle make t
 worse at the languages it helps. To test this, we train one small language model per
 tokenizer on the same training text (Appendix~\ref{app:impl}) and report bits per byte on
 FLORES devtest, a measure that does not depend on the tokenization
-(Table~\ref{tab:downstream}). Across tokenizers, the mean bits per byte differs by at most
+(table to be added). Across tokenizers, the mean bits per byte differs by at most
 --, and the spread between languages changes from -- under classical BPE to -- at $p=8$.
 Optionally, we also report the number of tokens per technical term on CSTT term lists.
 
-\begin{table}[t]
-\centering
-\small
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lccccc}
-\toprule
-Tokenizer & hi & mr & gu & en & Mean\\
-\midrule
-Classical ($p=1$) & -- & -- & -- & -- & --\\
-$p$-fair, $p=8$ & -- & -- & -- & -- & --\\
-$p$-fair, $p=32$ & -- & -- & -- & -- & --\\
-Hybrid, 75\% classical & -- & -- & -- & -- & --\\
-Parity-aware ($p=\infty$) & -- & -- & -- & -- & --\\
-\bottomrule
-\end{tabular}}
-\caption{Bits per byte of a 6-layer language model on FLORES-200 devtest (lower is better),
-one model per tokenizer, same training text.}
-\label{tab:downstream}
-\end{table}
+% LM table is generated from results_lm by paper_tables.py lm (E7)

@@ -3,12 +3,11 @@
 
 \noindent\textbf{Tokenizers and token cost.}
 Let $\mathcal{L}$ be a set of $L$ languages. A BPE vocabulary $V$ consists of a base
-alphabet and an ordered list of merges, and its size is bounded by a budget $K$. For each
-language $\ell\in\mathcal{L}$, we have a training text $\mathcal{D}_\ell$, from which merges
-are learned, and $c_\ell(a,b)$ denotes the number of times the adjacent pair $(a,b)$ occurs
-in $\mathcal{D}_\ell$ under the current vocabulary. To compare languages, we additionally
-use a multi-parallel development set that contains the same $S$ sentences in every
-language. Let $T_\ell(V)$ be the number of tokens that $V$ produces on the development
+alphabet and an ordered list of merges, with size bounded by a budget $K$. Each language
+$\ell$ has a training text $\mathcal{D}_\ell$ from which merges are learned, and
+$c_\ell(a,b)$ denotes the number of occurrences of the adjacent pair $(a,b)$ in
+$\mathcal{D}_\ell$ under the current vocabulary. A multi-parallel development set contains
+the same $S$ sentences in every language. Let $T_\ell(V)$ be the number of tokens that $V$ produces on the development
 sentences of language $\ell$. We define the \emph{token cost} of language $\ell$ as
 \begin{equation}
   t_\ell(V) \;=\; \frac{T_\ell(V)}{S},
@@ -18,14 +17,13 @@ the average number of tokens needed for one sentence of shared content. A tokeni
 when all $t_\ell$ are close to one another, and efficient when they are small.
 
 \noindent\textbf{Choice of cost unit.}
-The denominator in Eq.~\eqref{eq:cost} must not depend on the script. A natural
-alternative, tokens per byte, fails across scripts: in UTF-8 a Devanagari or Gujarati
-character occupies three bytes and a Latin character one, so the same sentence is about
-2.5 times longer in bytes in Hindi than in English. Per byte, English then appears to be the
-most expensive language even when it needs the fewest tokens per sentence, and any rule that
-helps the worst-off language sends its merges to English (Section~\ref{sec:unitresult}). To
-avoid this, we measure cost per parallel sentence, following \citet{petrov2023} and
-\citet{foroutan2026}, so that every language is charged for the same content.
+The denominator in Eq.~\eqref{eq:cost} must not depend on the script. Tokens per byte
+fails across scripts: in UTF-8 a Devanagari character occupies three bytes and a Latin
+character one, so per byte English appears to be the most expensive language even when it
+needs the fewest tokens per sentence, and any rule that helps the worst-off language sends
+its merges to English (Section~\ref{sec:unitresult}). We therefore measure cost per
+parallel sentence, following \citet{petrov2023} and \citet{foroutan2026}, so that every
+language is charged for the same content.
 
 \noindent\textbf{A multi-objective view.}
 The costs $\mathbf{t}(V)=(t_1(V),\dots,t_L(V))$ form a vector of objectives that we would
@@ -34,12 +32,11 @@ like to make small together:
   \min_{|V|\le K}\; \mathbf{t}(V).
   \label{eq:mo}
 \end{equation}
-A vocabulary $V$ is Pareto-optimal for Eq.~\eqref{eq:mo} if no other vocabulary of size at
-most $K$ lowers the cost of one language without raising the cost of another. The set of
-cost vectors of Pareto-optimal vocabularies is the compression--parity front. Since
-vocabularies are discrete merge sequences, this front cannot be computed exactly, and
-existing tokenizers each commit to one point on it: classical BPE favours total
-compression, and Parity-aware BPE favours the worst-off language.
+A vocabulary is Pareto-optimal for Eq.~\eqref{eq:mo} if no other vocabulary of size at most
+$K$ lowers the cost of one language without raising that of another, and the cost vectors
+of Pareto-optimal vocabularies form the compression--parity front. Existing tokenizers each
+commit to one point on it: classical BPE favours total compression, Parity-aware BPE the
+worst-off language.
 
 \noindent\textbf{Power-mean scalarisation.}
 To trace the front with a single parameter, we scalarise Eq.~\eqref{eq:mo} with a weighted
@@ -53,16 +50,10 @@ power mean,
 with weights $\pi_\ell>0$ that sum to one. We set $\pi_\ell$ to the share of language $\ell$
 in the training text, measured in development-sentence units, for the reason given in
 Section~\ref{sec:rule}. The exponent $p$ sets how strongly expensive
-languages are emphasised:
-\begin{itemize}
-  \item At $p=1$, $F_1=\sum_\ell \pi_\ell t_\ell$ is a weighted average cost, which is the
-  quantity classical BPE reduces.
-  \item As $p\to\infty$, $F_p\to\max_\ell t_\ell$, the cost of the worst-off language,
-  which is the quantity Parity-aware BPE reduces.
-  \item For $1<p<\infty$, $F_p$ lies between the two and gives more weight to a language
-  the more expensive it is.
-\end{itemize}
-For finite $p$ and positive weights, $F_p$ is strictly increasing in every $t_\ell$.
+languages are emphasised: at $p=1$, $F_1=\sum_\ell \pi_\ell t_\ell$ is the weighted average
+cost that classical BPE reduces; as $p\to\infty$, $F_p\to\max_\ell t_\ell$, the cost of the
+worst-off language that Parity-aware BPE reduces; for $1<p<\infty$, $F_p$ lies between the
+two and gives more weight to a language the more expensive it is. For finite $p$ and positive weights, $F_p$ is strictly increasing in every $t_\ell$.
 Consequently, an exact minimiser of Eq.~\eqref{eq:obj} is Pareto-optimal for
 Eq.~\eqref{eq:mo}, while a minimiser of the max at $p=\infty$ is only guaranteed to be
 weakly Pareto-optimal. In practice, we minimise Eq.~\eqref{eq:obj} greedily, one merge at a
@@ -70,13 +61,12 @@ time (Section~\ref{sec:method}), so the curve we measure is the front of the gre
 algorithm rather than the exact Pareto front.
 
 \noindent\textbf{Evaluation measures.}
-To place each tokenizer on the front, we report two quantities. For parity, we use the Gini
-coefficient of the per-language costs on a held-out parallel test set,
+For parity, we report the Gini coefficient of the per-language costs on a held-out parallel
+test set,
 \begin{equation}
   G \;=\; \frac{\sum_{i,j\in\mathcal{L}} |t_i - t_j|}{2L^2\,\bar t},
   \label{eq:gini}
 \end{equation}
-where $\bar t$ is the mean cost; $G=0$ when every language costs the same. For efficiency,
-we use compression in bytes per token on the training text, the quantity that classical BPE
-greedily maximises, so that the loss due to parity is measured on the axis classical BPE
-optimises. We additionally report bytes per token on the balanced test set.
+where $\bar t$ is the mean cost ($G=0$ when every language costs the same). For efficiency,
+we report compression in bytes per token on the training text, the quantity classical BPE
+greedily maximises, and additionally on the balanced test set.

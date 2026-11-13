@@ -11,12 +11,12 @@ tokenizers in between $p$-fair BPE and train them exactly by lazy evaluation, ab
 faster than full rescoring. On Hindi, Marathi, Gujarati and English, raising $p$
 traces a monotone compression--parity front in all five training samples. At $p=8$, the
 Gini coefficient of per-language cost falls by 40\% for a 0.6\% loss in compression. The
-% TODO (E3 in experiments.md): this "no language worse off" statement holds for the four-language
-% setting only. In the 14-language pilot (reference_results/l14_preview) p-fair raises the cheapest
-% languages (Bengali, Hindi) like every fairness rule does; what stays true is that p-fair never
-% raises a language that costs MORE than the classical mean, whereas the hybrid does (Gujarati,
-% Malayalam). Reword to the under-served form once E3 has error bars (paper_tables.py underserved).
-front matches the hybrid baseline, but unlike the hybrid, $p$-fair BPE never raises an
-Indian language's cost above its classical cost. Finally, we show that the cost unit and
-data balance decide the size and even the direction of the disparity.
+front coincides with that of the hybrid schedule of Parity-aware BPE, both with four
+languages and with 14 languages in ten scripts at natural data balance, where the two differ by at most 0.003 in Gini at equal compression; only at a 128k
+vocabulary is $p$-fair BPE fairer than every hybrid point (by 0.002 to 0.006 in Gini in
+five of five samples). Unlike the hybrid, however, $p$-fair
+BPE never raises the cost of an under-served language, one that costs more than the
+classical mean, in any of our settings. Finally, we show that the cost unit, the data
+balance and the vocabulary size decide the size and even the direction of the disparity
+more than the merge rule does.
 \end{abstract}

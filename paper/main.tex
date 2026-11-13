@@ -1,5 +1,10 @@
 \documentclass[11pt]{article}
 \usepackage[review]{acl}
+% lineno 5.6+ (TeX Live 2026) swaps the margins of the review line numbers in two-column
+% mode; put them back on the outer margins. Older lineno versions (Overleaf) are unaffected.
+\makeatletter
+\@ifpackagelater{lineno}{2026/02/11}{\AtBeginDocument{\switchlinenumbers*}}{}
+\makeatother
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage[T1]{fontenc}

@@ -4,53 +4,38 @@
 \noindent\textbf{BPE as an optimisation problem.}
 BPE was introduced for data compression \citep{gage1994} and adapted to subword
 segmentation by \citet{sennrich2016}. \citet{zouhar2023} formalise it as the search for a
-merge sequence that maximises the number of tokens saved, show that this objective is
-submodular over merge sequences, and bound the approximation ratio of the greedy algorithm.
-Unigram tokenization \citep{kudo2018} instead prunes a large vocabulary under a likelihood
-objective. These formulations give tokenizer learning a clear objective, but it is a single
-objective defined on the pooled corpus, with no notion of cost per language. In contrast, we
-treat the per-language costs as a vector of objectives and study the family of
-scalarisations that connects total compression to worst-case parity.
+merge sequence that maximises the number of tokens saved and bound the approximation ratio
+of the greedy algorithm; Unigram tokenization \citep{kudo2018} prunes a large vocabulary
+under a likelihood objective. Both objectives are defined on the pooled corpus, with no
+notion of cost per language.
 
 \noindent\textbf{Cross-lingual disparity and fair tokenizers.}
 \citet{petrov2023} show that the tokenizers of deployed models encode the same content with
-very different numbers of tokens across languages, and measure this cost on parallel text,
-the unit we adopt. Parity-aware BPE \citep{foroutan2026} changes the merge rule: at every
-step it selects the language with the worst compression on a multi-parallel development set
-and merges the most frequent pair in that language. The same work proposes a hybrid
-schedule and a moving-window variant to reach intermediate tokenizers.
-\citet{kanjirangat2026} extend the parity rule to the $N$ worst-off languages and find that
-increasing $N$ gives inconsistent effects across metrics. \citet{lee2026} compare equitable
-tokenizers on Southeast Asian languages and find that Parity-aware BPE lies on the
-efficiency--equity frontier but becomes less equitable as the vocabulary grows, since the
-rule bounds only the worst case. A second line of work changes the input rather than the
-rule, either by rebalancing the data on which the vocabulary is learned
-\citep{chung2023unimax} or by replacing the byte encoding with a morphology-driven one
-\citep{limisiewicz2024myte}. Nonetheless, the intermediate tokenizers in all these works are
-obtained by schedules, by a choice of $N$, or by data weights, none of which is derived from
-an objective over per-language costs. Our power-mean objective recovers both ends of this
-spectrum as limits of one rule, and weights every language continuously by its current cost
-instead of selecting a subset.
+very different numbers of tokens across languages, measured on parallel text, the unit we
+adopt. Parity-aware BPE \citep{foroutan2026} changes the merge rule: at every step it merges
+the most frequent pair of the language with the worst compression on a multi-parallel
+development set, and a hybrid schedule and a moving-window variant reach intermediate
+tokenizers. \citet{kanjirangat2026} extend the parity rule to the $N$ worst-off languages,
+and \citet{lee2026} find that Parity-aware BPE lies on the efficiency--equity frontier for
+Southeast Asian languages but becomes less equitable as the vocabulary grows. Other work
+changes the input rather than the rule, by rebalancing the data \citep{chung2023unimax} or
+by a morphology-driven byte encoding \citep{limisiewicz2024myte}. In all of these, the
+intermediate tokenizers come from schedules, a choice of $N$ or data weights, none derived
+from an objective over per-language costs.
 
 \noindent\textbf{Vocabulary allocation and Indian languages.}
-Several works decide how much vocabulary each language should receive. VoCap
-\citep{zheng2021vocap} allocates capacity per language from its average log probability,
-and XLM-V \citep{liang2023xlmv} builds per-cluster vocabularies before merging them.
-\citet{brahma2026} study 17 Indian languages in 11 scripts and set each cluster's share of
-the vocabulary in proportion to its share of the union of monolingual vocabularies. On the
-morphological axis, SuTRA \citep{rathore2026} penalises merges that cross morpheme
-boundaries in Hindi, Marathi and Gujarati and releases gold segmentations for these
-languages, while \citet{arnett2025} find across 70 languages that morphological alignment
-explains little of the variance in downstream performance. We use the SuTRA languages as
-our testbed, and treat allocation and morphology as complementary to the merge rule studied
-here.
+VoCap \citep{zheng2021vocap} allocates vocabulary per language from its average log
+probability, XLM-V \citep{liang2023xlmv} builds per-cluster vocabularies before merging
+them, and \citet{brahma2026} set each script cluster's share for 17 Indian languages in
+proportion to its share of the union of monolingual vocabularies. SuTRA \citep{rathore2026}
+penalises merges that cross morpheme boundaries in Hindi, Marathi and Gujarati, whereas
+\citet{arnett2025} find across 70 languages that morphological alignment explains little of
+the variance in downstream performance. We use the SuTRA languages as our testbed.
 
 \noindent\textbf{Fairness through scalarisation.}
-Power means are a standard way to scalarise competing objectives in multi-objective
-optimisation \citep{miettinen1999}. In resource allocation, the same family appears as
-$\alpha$-fair utility \citep{mo2000fair}, which moves from efficiency to max--min fairness
-as $\alpha$ grows, and in economics as the Atkinson index of inequality
-\citep{atkinson1970}. Our training algorithm also builds on the lazy greedy technique of
-\citet{minoux1978} for submodular maximisation. To our knowledge, this family has not been
-applied to the merge rule of a tokenizer, where it yields a closed-form weighting of pair
-counts and an exact lazy trainer.
+Power means are a standard scalarisation in multi-objective optimisation
+\citep{miettinen1999}; the same family appears as $\alpha$-fair utility in resource
+allocation \citep{mo2000fair} and as the Atkinson index in economics \citep{atkinson1970}.
+Our trainer builds on the lazy greedy technique of \citet{minoux1978}. To our knowledge,
+this family has not been applied to the merge rule of a tokenizer, where it yields a
+closed-form weighting of pair counts and an exact lazy trainer.

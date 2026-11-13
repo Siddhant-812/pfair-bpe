@@ -126,3 +126,16 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   row, then `python3 speed_table.py --out results_speed --langs hin,mar,guj,ben,pan,ori,asm,san,tam,tel,kan,mal,urd,eng
   --train-dir data_l14/train --dev-dir data_l14/flores/dev --vocab-size 64000` for the 14-language rows (~2 h).
 - Findings so far: lazy 4.6 s vs naive 120 s at p=1 (26x), 3.2 heap re-checks per merge (see timings.csv for the rest).
+
+## 2026-11-13  Phase 3 start (user agreed the rewording and appendix plan, asked for the 128k error bars)
+- E8 resumed, 14-language rows: `nohup /private/tmp/claude-501/-Users-siddhant-Desktop-pfair-bpe/f8f0011d-0444-42b2-8e1a-8d058149434b/scratchpad/e8b.sh > e8_speed_l14.log 2>&1 &` PID 58507
+  (speed_table.py --langs <14> --train-dir data_l14/train --vocab-size 64000, lazy and naive for p = 1, 8, inf).
+  Note: the trainer is single-threaded and the machine has 10 cores; the 128k error-bar run below ran at the same time.
+- E2 extension, error bars at 128k: `nohup python3 error_bars.py --samples 5 --ps 1,2,4,8,16,32,inf --hybrids 0.5,0.75,0.9 --vocab-size 128000 --out results_128k_eb > e2_128k_eb.log 2>&1 &` PID 58508
+- 128k error bars finished (results_128k_eb/, 5 samples x 10 tokenizers, ~1 h; log e2_128k_eb.log). Gini: classical
+  0.0376+-0.0006, p=8 0.0284+-0.0004, p=32 0.0141+-0.0002, Parity-aware 0.0031+-0.0003; monotone 5/5. Matched
+  compression: Hybrid-50 +0.0023+-0.0003, Hybrid-75 +0.0059+-0.0002, Hybrid-90 +0.0022+-0.0001, p-fair fairer in 5/5
+  samples for all three -- the single-run separation at 128k is confirmed (10-20x the spread). Written into Section 6.2,
+  the abstract, introduction and conclusion; the 128k row of the sensitivity table now uses the five-sample mean
+  (results_main/paper_sens.csv regenerated with 128k=results_128k_eb).
+- E8 14-language rows: (pending)
