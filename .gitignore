@@ -8,3 +8,5 @@ morph/
 __pycache__/
 *.log
 nohup.out
+e7_bundle/
+e7_bundle.tgz

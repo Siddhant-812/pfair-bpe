@@ -139,3 +139,13 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   the abstract, introduction and conclusion; the 128k row of the sensitivity table now uses the five-sample mean
   (results_main/paper_sens.csv regenerated with 128k=results_128k_eb).
 - E8 14-language rows: (pending)
+
+## 2026-11-13  E7 preparation (LM bits per byte)
+- MPS on this machine: train_lm.py works (--device mps) but at ~3,300 tokens/s in fp32 and ~4,100 with the new
+  --amp option (bf16 autocast) at batch 16; batch 32 thrashes memory (85 s/step). The planned run (2 epochs, 5
+  tokenizers + 2 seeds) would take ~35 h here, so the user runs it on a CUDA GPU instead.
+- Id files pre-encoded for Classical/p=8/p=32/Hybrid-75/Parity-aware from results_main/sample0/models into
+  results_lm/<tag>/ (train_*.ids, test_*.ids); bundle e7_bundle.tgz (448 MB: downstream/train_lm.py, the five model
+  dirs' vocab.txt/model.txt, FLORES devtest text, id files incl. copies for the seed-1 folders). Commands as in
+  experiments.md E7 (2 epochs, 6 layers, 512 dims, 8 heads, seq 512, batch 32; --seed 1 for Classical and p=8).
+  Results to copy back: results_lm/*/lm_results.csv, train_log.csv, config.json. Then paper_tables.py lm.
