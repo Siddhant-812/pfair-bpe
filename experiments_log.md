@@ -149,3 +149,6 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
   dirs' vocab.txt/model.txt, FLORES devtest text, id files incl. copies for the seed-1 folders). Commands as in
   experiments.md E7 (2 epochs, 6 layers, 512 dims, 8 heads, seq 512, batch 32; --seed 1 for Classical and p=8).
   Results to copy back: results_lm/*/lm_results.csv, train_log.csv, config.json. Then paper_tables.py lm.
+- E8 14-language rows finished (results_speed/timings.csv, log e8_speed_l14.log): p=1 33.5 s lazy vs 1020 s naive
+  (30x), p=8 28.8 vs 1939 (67x), p=inf 29.2 vs 381 (13x); re-checks per merge 3.5 / 33.4 / 3.9. 4 languages: 4.6/5.1/4.6 s
+  lazy vs 120/132/39 s naive. Table filled in Appendix (tab:speed).
