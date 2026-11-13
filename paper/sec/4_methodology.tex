@@ -49,12 +49,11 @@ $(\max_\ell t_\ell)^{p-1}$ does not change the $\argmax$; the weight of the wors
 language is then one and every other weight tends to zero, so the rule selects the most
 frequent pair of the worst-off language. This is the base rule of Parity-aware BPE
 \citep{foroutan2026} with cost measured per parallel sentence, and corresponds to a
-subgradient step on $\max_\ell t_\ell$. For $1<p<\infty$, every language keeps a positive weight. In contrast to the parity rule,
-which considers one language per merge, and to the Worst-$N$ rule \citep{kanjirangat2026},
-which weights the $N$ worst-off languages equally, $p$-fair BPE weights all languages
-continuously by their cost. In contrast to the hybrid schedule \citep{foroutan2026}, which
-switches rules at a fixed merge index, the balance between compression and parity is set by
-one parameter that is constant throughout training.
+subgradient step on $\max_\ell t_\ell$. For $1<p<\infty$ every language keeps a positive weight: unlike the parity rule (one language
+per merge) and the Worst-$N$ rule \citep{kanjirangat2026} (the $N$ worst-off weighted
+equally), $p$-fair BPE weights all languages continuously by their cost, and unlike the
+hybrid schedule \citep{foroutan2026} it uses one parameter that is constant throughout
+training.
 
 \subsection{Exact training by lazy evaluation}
 \label{sec:lazy}

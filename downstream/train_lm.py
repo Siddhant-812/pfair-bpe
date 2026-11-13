@@ -71,6 +71,7 @@ def main():
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    ap.add_argument("--amp", action="store_true", help="bfloat16 autocast also on mps/cpu (always on for cuda)")
     a = ap.parse_args()
     name = a.name or os.path.basename(a.tokenizer.rstrip("/"))
     langs = a.langs.split(",")
@@ -114,8 +115,9 @@ def main():
     n_params = sum(p.numel() for p in model.parameters())
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.95), weight_decay=0.1)
     sched = torch.optim.lr_scheduler.LambdaLR(opt, lambda s: min(1.0, (s + 1) / a.warmup) * 0.5 * (1 + math.cos(math.pi * min(1.0, s / max(1, total_steps)))))
-    use_amp = a.device.startswith("cuda")
-    scaler = torch.amp.GradScaler(enabled=use_amp)
+    dev_type = a.device.split(":")[0]
+    use_amp = dev_type == "cuda" or a.amp
+    scaler = torch.amp.GradScaler(enabled=dev_type == "cuda")
 
     # ---- train ----
     order = list(range(n_chunks))
@@ -131,7 +133,7 @@ def main():
         idx = order[pos: pos + a.batch_seqs]
         pos = pos + a.batch_seqs if pos + a.batch_seqs < len(order) else 0
         x = torch.stack([data[i * T: i * T + T] for i in idx]).to(a.device)
-        with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=use_amp):
+        with torch.autocast(device_type=dev_type, dtype=torch.bfloat16, enabled=use_amp):
             loss = model(input_ids=x, labels=x).loss  # transformers shifts the labels internally
         opt.zero_grad(set_to_none=True)
         scaler.scale(loss).backward()
@@ -168,7 +170,7 @@ def main():
                     x[j, : len(s)] = torch.tensor(s)
                     mask[j, : len(s)] = True
                 x, mask = x.to(a.device), mask.to(a.device)
-                with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=use_amp):
+                with torch.autocast(device_type=dev_type, dtype=torch.bfloat16, enabled=use_amp):
                     logits = model(input_ids=x, attention_mask=mask).logits.float()
                 lp = torch.log_softmax(logits[:, :-1], -1).gather(-1, x[:, 1:, None])[..., 0]
                 m = mask[:, 1:]

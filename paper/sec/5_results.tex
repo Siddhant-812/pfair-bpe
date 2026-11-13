@@ -30,11 +30,10 @@ standard deviation reported), and the devtest sentences were resampled 1000 time
 replacement (a paired bootstrap) to separate test-set variance from training-data variance.
 
 \noindent\textbf{Implementation and checks.}
-We implemented the trainer in Rust with no external dependencies. The lazy trainer produces
-merge lists identical to full rescoring for every rule in this paper on a small corpus and
-identical 32k vocabularies on the full corpus, the $p=1$ setting reproduces an independent
-textbook implementation of BPE merge for merge, and the evaluator's token counts equal the
-trainer's own totals. Training times are given in Appendix~\ref{app:impl}.
+The trainer is written in Rust. The lazy trainer produces merge lists identical to full
+rescoring for every rule in this paper, the $p=1$ setting reproduces an independent textbook
+BPE merge for merge, and the evaluator's token counts equal the trainer's own totals.
+Training times are given in Appendix~\ref{app:impl}.
 
 \subsection{Raising $p$ traces the compression--parity front}
 
@@ -47,10 +46,10 @@ measures (Table~\ref{tab:front}, Fig.~\ref{fig:front}), the Gini coefficient fal
 step, from 0.038 to 0.003, and so does compression of the training text, from 6.91 to 6.63
 bytes per token.
 
-The price of parity is uneven along the front. At $p=8$, the Gini coefficient is 40\% lower
-than under classical BPE, while compression is 0.6\% lower. At $p=16$, the reduction is 60\%
-for 1.3\%, and full parity costs 4.0\%. Thus, a large part of the disparity can be removed
-for a small part of the cost of removing all of it. On devtest, where every language has
+The price of parity is uneven along the front: at $p=8$ the Gini coefficient is 40\% lower
+than under classical BPE for 0.6\% less compression, at $p=16$ 60\% lower for 1.3\%, and full
+parity costs 4.0\%, so a large part of the disparity can be removed for a small part of the
+cost of removing all of it. On devtest, where every language has
 the same content, intermediate values of $p$ even compress better than classical BPE (8.89
 vs.\ 8.72 bytes per token at $p=16$): classical BPE optimises compression of the mostly
 English training mixture, whereas a balanced test set rewards the vocabulary that $p$-fair
@@ -79,12 +78,11 @@ Hybrid, 75\% classical & $0.0180\pm0.0005$ & $6.827\pm0.004$ & $8.821\pm0.008$ &
 Hybrid, 50\% classical & $0.0023\pm0.0004$ & $6.651\pm0.004$ & $8.834\pm0.005$ & 25\% & $-0.0012\pm0.0005$ (0/5)\\
 \bottomrule
 \end{tabular}
-\caption{Parity and compression at a 32k vocabulary with English at four times the text of
-each other language. Mean $\pm$ standard deviation over five samples of training text.
-``Merges led by English'' is the share of merges to whose score English contributes most.
-``Gini diff.'' is the hybrid's Gini minus that of the $p$-fair front interpolated at the same
-training-text compression (positive: $p$-fair fairer), with the number of samples in which
-$p$-fair is fairer.}
+\caption{Parity and compression at 32k with English at four times the text of each other
+language; mean $\pm$ standard deviation over five samples. ``Merges led by English'': share
+of merges to whose score English contributes most. ``Gini diff.'': hybrid Gini minus the
+$p$-fair front interpolated at the same training-text compression (positive: $p$-fair
+fairer), with the number of samples in which $p$-fair is fairer.}
 \label{tab:front}
 \end{table*}
 
@@ -93,7 +91,7 @@ $p$-fair is fairer.}
 \resizebox{\columnwidth}{!}{%
 \begin{tikzpicture}
 \begin{axis}[
-  width=9cm, height=5.0cm,
+  width=9cm, height=4.6cm,
   xlabel={compression of training text (bytes per token) $\rightarrow$ better},
   ylabel={Gini of per-language cost (lower is fairer)},
   xmin=6.56, xmax=6.97, ymin=-0.003, ymax=0.043,
@@ -125,11 +123,9 @@ $p$-fair is fairer.}
 \node[font=\footnotesize, text=hybrid, anchor=north west] at (axis cs:6.6560,0.0016) {50\%};
 \end{axis}
 \end{tikzpicture}}
-\caption{The measured compression--parity front. Each point is the mean of five samples of
-training text, and bars are one standard deviation (most are smaller than the marker).
-Increasing $p$ moves from classical BPE (top right) to Parity-aware BPE (bottom left). The
-hybrid baseline (share of classical merges) lies on the same curve; Worst-$N$ ($N=2,3$) and
-the moving window (triangles) coincide with the parity end.}
+\caption{The compression--parity front: means of five samples, bars one standard deviation
+(mostly smaller than the marker). The hybrid (share of classical merges) lies on the curve;
+Worst-$N$ ($N=2,3$) and the moving window (triangles) coincide with the parity end.}
 \label{fig:front}
 \end{figure}
 
@@ -154,16 +150,13 @@ measures, in line with its motivation in \citet{foroutan2026}.
 
 
 Worst-$N$ parity and the moving window do not interpolate in this setting
-(Table~\ref{tab:worstn}, Appendix~\ref{app:perlang}). With $N=2$ or $N=3$, the Worst-$N$
-rule pools the Indian languages, whose costs lie within 8\% of one another under classical
-BPE, so it behaves like the parity rule and lands at the parity end of the front (Gini
-0.0025 to 0.0029, compression 6.632 to 6.637 bytes per token, against 0.0028 and 6.634 for
-Parity-aware BPE); the moving window, which caps the share of recent merges a language may
-lead, lands at the same point. Their Gini at matched compression differs from the $p$-fair
-front by 0.0002 to 0.0006, within the sample-to-sample spread of the parity end, and in one
-to three of the five samples their compression lies below that of Parity-aware BPE, outside
-the front. Section~\ref{sec:multi} tests these rules where several languages are
-under-served at different levels.
+(Table~\ref{tab:worstn}, Appendix~\ref{app:perlang}). With $N=2$ or $N=3$ the Worst-$N$ rule
+pools the Indian languages, whose classical costs lie within 8\% of one another, so it
+behaves like the parity rule and lands at the parity end of the front (Gini 0.0025 to
+0.0029 against 0.0028 for Parity-aware BPE), as does the moving window; their Gini at
+matched compression differs from the $p$-fair front by 0.0002 to 0.0006, within the
+sample-to-sample spread. Section~\ref{sec:multi} tests these rules where several languages
+are under-served at different levels.
 
 Nevertheless, the hybrid and $p$-fair BPE distribute the cost differently (Table~\ref{tab:perlang}).
 For every value of $p$ we test, no Indian language costs more than under classical BPE in

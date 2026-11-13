@@ -5,17 +5,16 @@ We treated the per-language token costs of a tokenizer as a vector of objectives
 power-mean scalarisation yields a greedy merge rule that weights each language's pair counts
 by its current cost raised to the power $p-1$, contains classical BPE at $p=1$ and
 Parity-aware BPE as $p\to\infty$, and trains exactly by lazy evaluation about 20 times
-faster than full rescoring. On Hindi, Marathi, Gujarati and English, and on 14 languages in ten scripts at natural
-data balance, raising $p$ traces a monotone and repeatable front, on which a 40\% reduction
-in the Gini coefficient costs 0.6\% of compression. The front coincides with that of the hybrid schedule in both settings, and $p$-fair BPE
+faster than full rescoring. On four languages and on 14 languages in ten scripts at natural balance, raising $p$ traces
+a monotone and repeatable front on which a 40\% reduction in the Gini coefficient costs
+0.6\% of compression. The front coincides with that of the hybrid schedule, and $p$-fair BPE
 is fairer than the hybrid at matched compression only at a 128k vocabulary, so the
 contribution is a principled formulation of the existing trade-off rather than a tokenizer
-that dominates it.
-Nevertheless, the formulation exposes a difference in how cost is distributed, since
-$p$-fair BPE never makes an under-served language, one that costs more than the classical
-mean, more expensive than under classical BPE, whereas the hybrid schedule does. Moreover,
-our analysis shows that the cost unit, the training data balance and the vocabulary size
-decide the size, and even the direction, of the disparity more than the merge rule does.
+that dominates it. The formulation nevertheless exposes a difference in who pays: $p$-fair
+BPE never makes an under-served language, one above the classical mean cost, more expensive
+than classical BPE, whereas the hybrid does. Moreover, the cost unit, the data balance and
+the vocabulary size decide the size, and even the direction, of the disparity more than the
+merge rule does.
 
 \noindent\textbf{Practical takeaways.} Measure the cost on parallel content and not per
 byte, since a per-byte cost inverts the parity rule across scripts; report the data balance
@@ -25,20 +24,18 @@ since most of the disparity is removed well before full parity; and re-tune $p$ 
 vocabulary grows, since intermediate $p$ loses equity with size while the parity rule does
 not.
 
-\noindent\textbf{Open directions.} The formulation extends naturally to further axes and
-settings: a morphology penalty within the same rule, which the trainer already implements
-(Appendix~\ref{app:morph}), an allocation that protects small languages inside a large
-script cluster (Section~\ref{sec:alloc}), vocabularies beyond 256k, and a $p$-fair variant
-of Unigram pruning \citep{kudo2018}.
+\noindent\textbf{Open directions.} The formulation extends to a morphology penalty within the
+same rule, which the trainer already implements (Appendix~\ref{app:morph}), to an allocation
+that protects small languages inside a large script cluster, and to a $p$-fair variant of
+Unigram pruning \citep{kudo2018}.
 
 \section*{Limitations}
 
 \noindent\textbf{Scale and data.} We trained on 140 million characters for four languages and
-400 million for fourteen, all from one source (Sangraha), and evaluated on the 1012
-parallel sentences of FLORES-200, the only multi-parallel set we used. The sensitivity
-runs other than the 128k row are single runs, and the 14-language error bars come from
-three samples whose text overlaps for the smallest languages, since Sangraha has few files
-for them. Results may differ for larger corpora, other domains or more distant scripts.
+400 million for fourteen, all from Sangraha, and evaluated on the 1012 parallel sentences
+of FLORES-200 only. The sensitivity runs other than the 128k row are single runs, and the
+14-language samples overlap for the smallest languages, for which Sangraha has few files.
+Results may differ for larger corpora, other domains or more distant scripts.
 
 \noindent\textbf{Data balance as a design choice.} The size of the disparity depends mainly
 on the data balance, and our main setting with four times as much English is an assumption;

@@ -17,17 +17,16 @@ the average number of tokens needed for one sentence of shared content. A tokeni
 when all $t_\ell$ are close to one another, and efficient when they are small.
 
 \noindent\textbf{Choice of cost unit.}
-The denominator in Eq.~\eqref{eq:cost} must not depend on the script. Tokens per byte
-fails across scripts: in UTF-8 a Devanagari character occupies three bytes and a Latin
-character one, so per byte English appears to be the most expensive language even when it
-needs the fewest tokens per sentence, and any rule that helps the worst-off language sends
-its merges to English (Section~\ref{sec:unitresult}). We therefore measure cost per
-parallel sentence, following \citet{petrov2023} and \citet{foroutan2026}, so that every
-language is charged for the same content.
+The denominator in Eq.~\eqref{eq:cost} must not depend on the script: in UTF-8 a Devanagari
+character occupies three bytes and a Latin character one, so per byte English appears to be
+the most expensive language even when it needs the fewest tokens per sentence, and any rule
+that helps the worst-off language then sends its merges to English
+(Section~\ref{sec:unitresult}). We therefore measure cost per parallel sentence, following
+\citet{petrov2023} and \citet{foroutan2026}.
 
 \noindent\textbf{A multi-objective view.}
-The costs $\mathbf{t}(V)=(t_1(V),\dots,t_L(V))$ form a vector of objectives that we would
-like to make small together:
+The costs $\mathbf{t}(V)=(t_1(V),\dots,t_L(V))$ form a vector of objectives to be made small
+together:
 \begin{equation}
   \min_{|V|\le K}\; \mathbf{t}(V).
   \label{eq:mo}
