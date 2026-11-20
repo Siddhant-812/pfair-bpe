@@ -10,3 +10,4 @@ __pycache__/
 nohup.out
 e7_bundle/
 e7_bundle.tgz
+*.zip
