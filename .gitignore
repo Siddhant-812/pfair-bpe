@@ -11,3 +11,13 @@ nohup.out
 e7_bundle/
 e7_bundle.tgz
 *.zip
+# local backup of the old paper draft (kept on disk, not published)
+Optimisation_Tokenization/
+.DS_Store
+# LaTeX build output
+paper/*.pdf
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
