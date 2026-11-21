@@ -21,3 +21,5 @@ paper/*.log
 paper/*.bbl
 paper/*.blg
 paper/*.out
+# paper source kept local until publication
+paper/
