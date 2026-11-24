@@ -162,3 +162,5 @@ deleted; Limitations now states that downstream effects are not measured; Append
 the morphology-penalty formulation without results. No "(planned)" or TODO markers remain.
 Paper: 14 pages, main text ends on page 8, 0 undefined references. `e7_bundle/`,
 `e7_bundle.tgz` and `downstream/train_lm.py` are kept in case E7 is run for a revision.
+- 2026-11-24: E7 kept in queue for the user's Slurm cluster (partitions l40/dgx). e7_bundle.tgz rebuilt (433 MB) with
+  run_e7.sbatch in the cluster's conventions (l40 partition+qos, conda hook, logs/), setup_env.sh and HANDOFF.md.
