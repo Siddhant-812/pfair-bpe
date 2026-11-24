@@ -152,3 +152,13 @@ One entry per run: date, command, results folder, findings. Newest at the bottom
 - E8 14-language rows finished (results_speed/timings.csv, log e8_speed_l14.log): p=1 33.5 s lazy vs 1020 s naive
   (30x), p=8 28.8 vs 1939 (67x), p=inf 29.2 vs 381 (13x); re-checks per merge 3.5 / 33.4 / 3.9. 4 languages: 4.6/5.1/4.6 s
   lazy vs 120/132/39 s naive. Table filled in Appendix (tab:speed).
+
+## 2026-11-24: E5 and E7 dropped from the paper
+
+Decision (user): the morphology experiment E5 (no SuTRA gold segmentation files available)
+and the language-model evaluation E7 (GPU run not performed) are removed from the paper.
+Edits: Section 6.7 "Language-model evaluation (planned)" and the appendix LM paragraph
+deleted; Limitations now states that downstream effects are not measured; Appendix G keeps
+the morphology-penalty formulation without results. No "(planned)" or TODO markers remain.
+Paper: 14 pages, main text ends on page 8, 0 undefined references. `e7_bundle/`,
+`e7_bundle.tgz` and `downstream/train_lm.py` are kept in case E7 is run for a revision.
