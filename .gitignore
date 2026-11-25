@@ -23,3 +23,12 @@ paper/*.blg
 paper/*.out
 # paper source kept local until publication
 paper/
+# working notes for the paper (kept locally)
+CLAUDE.md
+experiments.md
+experiments_log.md
+chart_with_error_bars.tex
+PAPER_HANDOFF.md
+*.pdf
+*.tgz
+pfair_paper_*/
