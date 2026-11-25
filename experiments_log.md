@@ -164,3 +164,20 @@ Paper: 14 pages, main text ends on page 8, 0 undefined references. `e7_bundle/`,
 `e7_bundle.tgz` and `downstream/train_lm.py` are kept in case E7 is run for a revision.
 - 2026-11-24: E7 kept in queue for the user's Slurm cluster (partitions l40/dgx). e7_bundle.tgz rebuilt (433 MB) with
   run_e7.sbatch in the cluster's conventions (l40 partition+qos, conda hook, logs/), setup_env.sh and HANDOFF.md.
+
+## 2026-11-25  E7 language-model bits per byte -> results_lm/  (run on the user's Slurm GPU cluster)
+- Run from e7_bundle.tgz with run_e7.sbatch (l40 partition): seven runs, all with --epochs 2 --layers 6 --dim 512
+  --heads 8 --seq-len 512 --batch-seqs 32 --lr 6e-4 --warmup 200 on CUDA (configs verified from config.json);
+  seeds 0 for p1, p8, p32, hybrid0.75, pinf and seed 1 for p1_seed1, p8_seed1. 824-858 s per run, 4330-4508 steps,
+  35.5M-37.0M training tokens per epoch, 35.6M parameters. Returned as lm_out.tgz (lm_results.csv, train_log.csv,
+  config.json per folder); copied into results_lm/<tag>/ next to the id files.
+- `python3 paper_tables.py lm --dirs "Classical=results_lm/p1,p=8=results_lm/p8,p=32=results_lm/p32,Hybrid-75=results_lm/hybrid0.75,Parity-aware=results_lm/pinf" --seeds "Classical=results_lm/p1_seed1,p=8=results_lm/p8_seed1"`
+  (new --seeds option: cells are the mean over seeds, Mean column +- half the seed range) -> results_lm/paper_lm.csv.
+- Findings: mean bits per byte 1.0163+-0.0013 (Classical), 1.0177+-0.0015 (p=8), 1.0152 (p=32), 1.0151 (Hybrid-75),
+  1.0133 (Parity-aware); seed-to-seed difference 0.0025-0.0030, so no tokenizer is separated from classical BPE by
+  more than seed noise (outcome (a) of experiments.md). Per language: hin/mar/guj improve by up to 0.007 and eng
+  worsens by up to 0.007 from Classical to Parity-aware, following the token budget, with per-language seed
+  differences of 0.002-0.004. Max/min across languages 2.17-2.18 for every tokenizer (UTF-8 byte effect, not parity).
+  Written as Section 6.5 "Language-model check" (main text), Appendix H paragraph + tab:lm, abstract, contribution
+  (iii), conclusion and Limitations; the stale "about 20 times" speedup wording replaced by "an order of magnitude".
+  Paper: 14 pages, conclusion ends on page 8, Limitations starts page 9, 0 undefined references. E7 complete.

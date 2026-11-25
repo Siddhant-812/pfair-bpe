@@ -218,16 +218,31 @@ def cmd_alloc(a):
 
 
 def cmd_lm(a):
-    data = {}
+    """bits per byte per language; --seeds "label=dir,..." adds second-seed runs: cells are the mean over seeds and the
+    Mean column carries half the seed-to-seed range. Also writes paper_lm.csv next to the first results folder."""
+    data, seeds = {}, {}
     for item in a.dirs.split(","):
         label, d = item.rsplit("=", 1)
-        data[label] = read_csv(os.path.join(d, "lm_results.csv"))
-    langs = [r["lang"] for r in next(iter(data.values()))]
-    rows = []
-    for label, rs in data.items():
-        b = {r["lang"]: float(r["bits_per_byte"]) for r in rs}
-        rows.append([esc(label)] + [f"{b[l]:.4f}" for l in langs] + [f"{st.mean(b.values()):.4f}", f"{max(b.values()) / min(b.values()):.3f}"])
-    print(latex_table(["Tokenizer"] + langs + ["Mean", "Max/min"], rows, "Bits per byte of a small LM on FLORES-200 devtest.", "tab:lm"))
+        data[label] = [read_csv(os.path.join(d, "lm_results.csv"))]
+    if a.seeds:
+        for item in a.seeds.split(","):
+            label, d = item.rsplit("=", 1)
+            data[label].append(read_csv(os.path.join(d, "lm_results.csv")))
+    langs = [r["lang"] for r in data[next(iter(data))][0]]
+    rows, csv_rows = [], []
+    for label, runs in data.items():
+        per = [{r["lang"]: float(r["bits_per_byte"]) for r in rs} for rs in runs]
+        b = {l: st.mean(x[l] for x in per) for l in langs}
+        means = [st.mean(x.values()) for x in per]
+        mean = st.mean(means)
+        spread = (max(means) - min(means)) / 2 if len(means) > 1 else None
+        mean_cell = f"{mean:.4f}" + (f" $\\pm$ {spread:.4f}" if spread is not None else "")
+        rows.append([esc(label)] + [f"{b[l]:.4f}" for l in langs] + [mean_cell, f"{max(b.values()) / min(b.values()):.3f}"])
+        csv_rows.append([label, len(runs)] + [f"{b[l]:.4f}" for l in langs] + [f"{mean:.4f}", "" if spread is None else f"{spread:.4f}"])
+    out = os.path.join(os.path.dirname(a.dirs.split(",")[0].rsplit("=", 1)[1].rstrip("/")), "paper_lm.csv")
+    write_csv(out, ["method", "seeds"] + langs + ["mean_bpb", "seed_halfrange"], csv_rows)
+    print(latex_table(["Tokenizer"] + langs + ["Mean", "Max/min"], rows,
+                      "Bits per byte of a small language model on FLORES-200 devtest.", "tab:lm"))
 
 
 def cmd_chart(a):
@@ -249,6 +264,7 @@ def main():
     ap.add_argument("--dirs", default="")
     ap.add_argument("--methods", default="", help="sens: only these methods (comma separated), in this order")
     ap.add_argument("--csv", default="", help="sens: also write the table as CSV to this path")
+    ap.add_argument("--seeds", default="", help="lm: second-seed folders as label=dir,...")
     ap.add_argument("--lead", default="eng", help="front: add the share of merges led by this language ('' for none)")
     a = ap.parse_args()
     if a.what in ("front", "perlang", "regress", "underserved", "morph", "alloc", "chart") and not a.dir:
