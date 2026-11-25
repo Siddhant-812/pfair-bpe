@@ -181,3 +181,7 @@ Paper: 14 pages, main text ends on page 8, 0 undefined references. `e7_bundle/`,
   Written as Section 6.5 "Language-model check" (main text), Appendix H paragraph + tab:lm, abstract, contribution
   (iii), conclusion and Limitations; the stale "about 20 times" speedup wording replaced by "an order of magnitude".
   Paper: 14 pages, conclusion ends on page 8, Limitations starts page 9, 0 undefined references. E7 complete.
+- 2026-11-25 (later): at the user's request the E7 prose and table were taken out of paper/ again; the author will
+  write Section 6.x themselves. All verified E7 numbers, the generated table and the placement notes are in
+  paper/PAPER_HANDOFF.md section 7 (also copied to PAPER_HANDOFF.md at the repo root). The stale "about 20 times"
+  speedup wording in the intro/conclusion stays replaced by "an order of magnitude".
